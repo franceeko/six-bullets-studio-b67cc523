@@ -3,7 +3,7 @@ import { Nav } from "@/components/site/Nav";
 import { Hero } from "@/components/site/Hero";
 import { Marquee } from "@/components/site/Marquee";
 import { About } from "@/components/site/About";
-import { Games } from "@/components/site/Games";
+import { HappyTown } from "@/components/site/HappyTown";
 import { Team } from "@/components/site/Team";
 import { Contact } from "@/components/site/Contact";
 import { Footer } from "@/components/site/Footer";
@@ -16,12 +16,13 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Six Bullets (6B) é um studio independente no Roblox construindo mundos com atmosfera, mecânicas profundas e identidade própria.",
+          "Six Bullets (6B) é um studio brasileiro independente no Roblox. Criadores de Happy Town, horror psicológico cooperativo.",
       },
       { property: "og:title", content: "Six Bullets — Roblox Studio" },
       {
         property: "og:description",
-        content: "Studio de jogos no Roblox. Atmosfera, profundidade e ambição.",
+        content:
+          "Studio brasileiro de jogos no Roblox. Atmosfera, alma e Happy Town a caminho.",
       },
     ],
   }),
@@ -30,14 +31,14 @@ export const Route = createFileRoute("/")({
 
 function Index() {
   return (
-    <div className="relative bg-background text-bone">
+    <div className="relative bg-cream text-ink">
       <GrainOverlay />
       <Nav />
       <main>
         <Hero />
         <Marquee />
         <About />
-        <Games />
+        <HappyTown />
         <Team />
         <Contact />
       </main>

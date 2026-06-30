@@ -31,11 +31,18 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+
+  --color-cream: var(--cream);
+  --color-paper: var(--paper);
+  --color-ink: var(--ink);
   --color-wine: var(--wine);
-  --color-wine-glow: var(--wine-glow);
   --color-wine-deep: var(--wine-deep);
-  --color-surface: var(--surface);
-  --color-bone: var(--bone);
+  --color-wine-soft: var(--wine-soft);
+  --color-butter: var(--butter);
+  --color-sage: var(--sage);
+  --color-blush: var(--blush);
+  --color-sky: var(--sky);
+
   --font-display: "Fraunces Variable", ui-serif, Georgia, serif;
   --font-sans: "Inter Tight Variable", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
@@ -43,31 +50,38 @@
 
 :root {
   --radius: 0.5rem;
-  --background: oklch(0.13 0.012 20);
-  --foreground: oklch(0.96 0.008 60);
-  --card: oklch(0.16 0.018 18);
-  --card-foreground: oklch(0.96 0.008 60);
-  --popover: oklch(0.16 0.018 18);
-  --popover-foreground: oklch(0.96 0.008 60);
-  --primary: oklch(0.44 0.14 18);
-  --primary-foreground: oklch(0.98 0.005 60);
-  --secondary: oklch(0.22 0.02 18);
-  --secondary-foreground: oklch(0.96 0.008 60);
-  --muted: oklch(0.22 0.018 20);
-  --muted-foreground: oklch(0.72 0.02 30);
-  --accent: oklch(0.55 0.18 20);
-  --accent-foreground: oklch(0.98 0.005 60);
-  --destructive: oklch(0.55 0.22 27);
-  --destructive-foreground: oklch(0.98 0.005 60);
-  --border: oklch(0.28 0.03 20 / 60%);
-  --input: oklch(0.28 0.03 20);
-  --ring: oklch(0.55 0.18 20);
 
-  --wine: oklch(0.44 0.14 18);
-  --wine-glow: oklch(0.58 0.18 20);
-  --wine-deep: oklch(0.28 0.10 18);
-  --surface: oklch(0.16 0.018 18);
-  --bone: oklch(0.96 0.008 60);
+  /* warm, brazilian-ish, playful palette */
+  --cream: oklch(0.97 0.02 80);
+  --paper: oklch(0.94 0.025 75);
+  --ink: oklch(0.18 0.04 20);
+  --wine: oklch(0.42 0.16 18);
+  --wine-deep: oklch(0.28 0.12 18);
+  --wine-soft: oklch(0.85 0.07 20);
+  --butter: oklch(0.86 0.13 90);
+  --sage: oklch(0.74 0.08 150);
+  --blush: oklch(0.84 0.09 30);
+  --sky: oklch(0.78 0.09 230);
+
+  --background: var(--cream);
+  --foreground: var(--ink);
+  --card: var(--paper);
+  --card-foreground: var(--ink);
+  --popover: var(--paper);
+  --popover-foreground: var(--ink);
+  --primary: var(--wine);
+  --primary-foreground: var(--cream);
+  --secondary: var(--paper);
+  --secondary-foreground: var(--ink);
+  --muted: var(--paper);
+  --muted-foreground: oklch(0.45 0.04 25);
+  --accent: var(--butter);
+  --accent-foreground: var(--ink);
+  --destructive: oklch(0.55 0.22 27);
+  --destructive-foreground: var(--cream);
+  --border: oklch(0.18 0.04 20 / 18%);
+  --input: oklch(0.18 0.04 20 / 18%);
+  --ring: var(--wine);
 }
 
 @layer base {
@@ -86,7 +100,7 @@
   }
   ::selection {
     background: var(--wine);
-    color: var(--bone);
+    color: var(--cream);
   }
 }
 
@@ -95,22 +109,18 @@
   inset: 0;
   pointer-events: none;
   z-index: 60;
-  opacity: 0.08;
-  mix-blend-mode: overlay;
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.9 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
-  animation: grain-shift 1.2s steps(6) infinite;
+  opacity: 0.18;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.1  0 0 0 0 0.05  0 0 0 0 0.08  0 0 0 0.55 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  animation: grain-shift 1.4s steps(6) infinite;
 }
 
-@utility vignette {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 55;
-  background: radial-gradient(ellipse at center, transparent 50%, oklch(0.05 0.01 18 / 0.7) 100%);
-}
-
-@utility wine-glow-text {
-  text-shadow: 0 0 40px oklch(0.55 0.18 20 / 0.4), 0 0 80px oklch(0.44 0.14 18 / 0.25);
+@utility paper-texture {
+  background-image:
+    radial-gradient(oklch(0.18 0.04 20 / 0.05) 1px, transparent 1px),
+    radial-gradient(oklch(0.42 0.16 18 / 0.04) 1px, transparent 1px);
+  background-size: 24px 24px, 36px 36px;
+  background-position: 0 0, 12px 18px;
 }
 
 @keyframes grain-shift {
@@ -126,7 +136,32 @@
   0% { transform: translateX(0); }
   100% { transform: translateX(-50%); }
 }
-
 .marquee-track {
-  animation: marquee 30s linear infinite;
+  animation: marquee 32s linear infinite;
+}
+
+@keyframes wobble {
+  0%, 100% { transform: rotate(-2deg); }
+  50% { transform: rotate(2deg); }
+}
+.wobble { animation: wobble 4s ease-in-out infinite; }
+
+@keyframes spin-slow {
+  to { transform: rotate(360deg); }
+}
+.spin-slow { animation: spin-slow 18s linear infinite; }
+
+@keyframes window-flicker {
+  0%, 92%, 100% { opacity: 1; }
+  93% { opacity: 0.3; }
+  94% { opacity: 1; }
+  96% { opacity: 0.5; }
+  97% { opacity: 1; }
+}
+.flicker { animation: window-flicker 5s ease-in-out infinite; }
+
+@keyframes drift {
+  0% { transform: translateX(-10px); opacity: 0.3; }
+  50% { opacity: 0.7; }
+  100% { transform: translateX(40px); opacity: 0; }
 }

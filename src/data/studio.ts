@@ -1,28 +1,27 @@
 import game1 from "@/assets/game-1.jpg";
-import game2 from "@/assets/game-2.jpg";
-import game3 from "@/assets/game-3.jpg";
 
 export type Dev = {
   name: string;
   role: string;
   tag: "Founders" | "Management" | "Dev" | "Art" | "Audio";
+  color: "wine" | "butter" | "sage" | "blush" | "sky";
 };
 
 export const devs: Dev[] = [
-  { name: "Francez", role: "Founder · Project Manager · UI & Game Designer", tag: "Founders" },
-  { name: "Samuca", role: "Founder · Project Manager · Game Designer", tag: "Founders" },
-  { name: "Zark", role: "Sub Owner · GFX Artist", tag: "Founders" },
-  { name: "Thugo", role: "Server Manager", tag: "Management" },
-  { name: "Marpuf", role: "Community Manager", tag: "Management" },
-  { name: "Yuki", role: "Lead Dev · Modeler", tag: "Dev" },
-  { name: "Stray", role: "Lead Dev · Modeler & Builder", tag: "Dev" },
-  { name: "Syntax", role: "Programmer", tag: "Dev" },
-  { name: "Squidnoodles", role: "Scripter", tag: "Dev" },
-  { name: "Thug", role: "Animator", tag: "Art" },
-  { name: "Whirle", role: "Animator", tag: "Art" },
-  { name: "Poli", role: "SFX Artist · Music Composer", tag: "Audio" },
-  { name: "Melo", role: "Builder", tag: "Dev" },
-  { name: "Japa", role: "Game Designer", tag: "Dev" },
+  { name: "Francez", role: "Founder · Project Manager · UI & Game Designer", tag: "Founders", color: "wine" },
+  { name: "Samuca", role: "Founder · Project Manager · Game Designer", tag: "Founders", color: "butter" },
+  { name: "Zark", role: "Sub Owner · GFX Artist", tag: "Founders", color: "blush" },
+  { name: "Thugo", role: "Server Manager", tag: "Management", color: "sage" },
+  { name: "Marpuf", role: "Community Manager", tag: "Management", color: "sky" },
+  { name: "Yuki", role: "Lead Dev · Modeler", tag: "Dev", color: "wine" },
+  { name: "Stray", role: "Lead Dev · Modeler & Builder", tag: "Dev", color: "butter" },
+  { name: "Syntax", role: "Programmer", tag: "Dev", color: "sage" },
+  { name: "Squidnoodles", role: "Scripter", tag: "Dev", color: "blush" },
+  { name: "Thug", role: "Animator", tag: "Art", color: "sky" },
+  { name: "Whirle", role: "Animator", tag: "Art", color: "wine" },
+  { name: "Poli", role: "SFX Artist · Music Composer", tag: "Audio", color: "butter" },
+  { name: "Melo", role: "Builder", tag: "Dev", color: "sage" },
+  { name: "Japa", role: "Game Designer", tag: "Dev", color: "blush" },
 ];
 
 export type Game = {
@@ -35,24 +34,11 @@ export type Game = {
 
 export const games: Game[] = [
   {
-    title: "Crimson Frontier",
+    title: "Happy Town",
     status: "Em desenvolvimento",
-    description: "Western tático multiplayer. Duelos, assaltos e cidades vivas.",
+    description:
+      "Horror psicológico cooperativo numa cidade pacata que esconde algo profundamente errado. Inspirado em Silent Hill, The Mimic e The Mystery of Duvall Drive.",
     cover: game1,
-    href: "#",
-  },
-  {
-    title: "Neon District",
-    status: "Em breve",
-    description: "Survival cyberpunk em mundo aberto. Facções, hacking e combate.",
-    cover: game2,
-    href: "#",
-  },
-  {
-    title: "Vesper Cathedral",
-    status: "Lançado",
-    description: "Horror gótico cooperativo. Rituais, segredos e escolhas pesadas.",
-    cover: game3,
     href: "#",
   },
 ];
