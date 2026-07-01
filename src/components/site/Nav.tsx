@@ -1,10 +1,10 @@
 import { motion } from "framer-motion";
 
 const links = [
-  { href: "#sobre", label: "Sobre" },
-  { href: "#happy-town", label: "Happy Town" },
-  { href: "#equipe", label: "Equipe" },
-  { href: "#contato", label: "Contato" },
+  { href: "#happy-town", label: "Project" },
+  { href: "#sobre", label: "Studio" },
+  { href: "#equipe", label: "Crew" },
+  { href: "#contato", label: "Contact" },
 ];
 
 export function Nav() {
@@ -12,37 +12,45 @@ export function Nav() {
     <motion.header
       initial={{ y: -40, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-      className="fixed top-0 inset-x-0 z-50 backdrop-blur-md bg-cream/70 border-b border-ink/10"
+      transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+      className="fixed top-0 inset-x-0 z-50 backdrop-blur-xl bg-cream/60 border-b border-ink/8"
     >
-      <nav className="max-w-7xl mx-auto px-6 lg:px-10 h-16 flex items-center justify-between">
-        <a href="#top" className="flex items-center gap-2.5 font-display text-xl tracking-tight text-ink group">
+      <nav className="max-w-[1400px] mx-auto px-6 lg:px-12 h-16 md:h-20 flex items-center justify-between">
+        <a href="#top" className="flex items-baseline gap-2 group">
           <motion.span
-            whileHover={{ rotate: 360 }}
-            transition={{ duration: 0.8, ease: "easeInOut" }}
-            className="inline-flex items-center justify-center size-9 rounded-full bg-wine text-cream font-mono text-sm font-bold"
+            whileHover={{ rotate: [0, -8, 8, 0] }}
+            transition={{ duration: 0.6 }}
+            className="inline-block font-[var(--font-script)] text-3xl md:text-4xl text-ink leading-none"
+            style={{ fontFamily: "var(--font-script)" }}
           >
-            6B
+            six bullets
           </motion.span>
-          <span className="hidden sm:inline italic">Six Bullets</span>
+          <span className="font-mono text-[10px] uppercase tracking-[0.24em] text-ink/40 hidden md:inline">
+            / 6B
+          </span>
         </a>
-        <ul className="hidden md:flex items-center gap-7 font-mono text-[11px] uppercase tracking-[0.18em] text-ink/70">
+
+        <ul className="hidden md:flex items-center gap-8 font-mono text-[11px] uppercase tracking-[0.22em] text-ink/70">
           {links.map((l) => (
             <li key={l.href}>
               <a
                 href={l.href}
-                className="relative hover:text-wine transition-colors after:absolute after:left-0 after:-bottom-1 after:h-0.5 after:w-0 after:bg-wine after:transition-all hover:after:w-full"
+                className="relative hover:text-ink transition-colors after:absolute after:left-0 after:-bottom-1.5 after:h-px after:w-0 after:bg-wine after:transition-all hover:after:w-full"
               >
                 {l.label}
               </a>
             </li>
           ))}
         </ul>
+
         <a
           href="#contato"
-          className="font-mono text-[11px] uppercase tracking-[0.18em] px-4 py-2 bg-ink text-cream hover:bg-wine transition-colors rounded-full"
+          className="group inline-flex items-center gap-2 pl-4 pr-1.5 py-1.5 bg-ink text-cream font-mono text-[10px] uppercase tracking-[0.22em] rounded-full hover:bg-wine transition-colors"
         >
-          Discord ↗
+          Discord
+          <span className="inline-flex items-center justify-center size-7 rounded-full bg-cream text-ink group-hover:translate-x-0.5 transition-transform">
+            ↗
+          </span>
         </a>
       </nav>
     </motion.header>

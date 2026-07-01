@@ -31,7 +31,7 @@ export function SectionHeader({
           <span className={`inline-block size-2 rounded-full ${dotMap[accent]}`} />
           {number} — {kicker}
         </div>
-        <h2 className="font-display font-light text-5xl md:text-7xl tracking-[-0.03em] text-ink">
+        <h2 className="font-display italic font-normal text-5xl md:text-7xl tracking-[-0.02em] text-ink">
           {title}
         </h2>
       </div>
