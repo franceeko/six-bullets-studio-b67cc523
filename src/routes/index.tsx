@@ -12,17 +12,17 @@ import { GrainOverlay } from "@/components/site/GrainOverlay";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Six Bullets — Roblox Studio" },
+      { title: "Six Bullets — Roblox Horror Studio" },
       {
         name: "description",
         content:
-          "Six Bullets (6B) é um studio brasileiro independente no Roblox. Criadores de Happy Town, horror psicológico cooperativo.",
+          "Six Bullets (6B) is a seven-person studio building Happy Town, a psychological horror project on Roblox.",
       },
-      { property: "og:title", content: "Six Bullets — Roblox Studio" },
+      { property: "og:title", content: "Six Bullets — Roblox Horror Studio" },
       {
         property: "og:description",
         content:
-          "Studio brasileiro de jogos no Roblox. Atmosfera, alma e Happy Town a caminho.",
+          "Small crew, sharp aim. Now cooking Happy Town — a slow-burn horror on Roblox.",
       },
     ],
   }),

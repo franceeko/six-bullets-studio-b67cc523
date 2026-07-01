@@ -1,103 +1,155 @@
-import { motion } from "framer-motion";
-
-const title = "SIX BULLETS";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { useRef } from "react";
+import happyTown from "@/assets/happy-town-banner.png.asset.json";
 
 export function Hero() {
+  const ref = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
+  const yChip = useTransform(scrollYProgress, [0, 1], [0, -80]);
+  const rotChip = useTransform(scrollYProgress, [0, 1], [-3, 6]);
+  const yTitle = useTransform(scrollYProgress, [0, 1], [0, -120]);
+
   return (
     <section
+      ref={ref}
       id="top"
-      className="relative min-h-screen flex flex-col justify-center overflow-hidden pt-20 paper-texture"
+      className="relative min-h-screen flex flex-col justify-center overflow-hidden pt-24 md:pt-28"
     >
-      {/* floating colorful blobs */}
+      {/* Animated diagonal light rays — the Bepp cream shimmer */}
+      <div className="light-rays" aria-hidden />
+
+      {/* Faint dotted paper texture */}
+      <div className="absolute inset-0 paper-texture opacity-40 pointer-events-none" aria-hidden />
+
+      {/* Soft wine glow — subtle, not the old blob party */}
       <motion.div
         aria-hidden
-        animate={{ y: [0, -30, 0], rotate: [0, 8, 0] }}
-        transition={{ duration: 9, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute top-24 -left-10 size-64 rounded-full bg-butter/60 blur-3xl"
-      />
-      <motion.div
-        aria-hidden
-        animate={{ y: [0, 30, 0], rotate: [0, -10, 0] }}
-        transition={{ duration: 11, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute bottom-20 right-0 size-80 rounded-full bg-wine-soft/70 blur-3xl"
-      />
-      <motion.div
-        aria-hidden
-        animate={{ y: [0, -20, 0] }}
-        transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute top-1/2 left-1/3 size-40 rounded-full bg-sage/50 blur-3xl"
+        animate={{ scale: [1, 1.15, 1], opacity: [0.35, 0.55, 0.35] }}
+        transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute -bottom-40 -right-40 size-[42rem] rounded-full bg-wine-soft/50 blur-3xl"
       />
 
-      <div className="relative max-w-7xl mx-auto px-6 lg:px-10 w-full">
+      <div className="relative max-w-[1400px] mx-auto px-6 lg:px-12 w-full">
+        {/* Availability pill */}
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1 }}
-          className="font-mono text-[10px] md:text-xs uppercase tracking-[0.4em] text-wine mb-8 flex items-center gap-3"
+          initial={{ opacity: 0, y: -8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="flex justify-center mb-10 md:mb-14"
         >
-          <span className="inline-block size-1.5 rounded-full bg-wine animate-pulse" />
-          000 — Roblox Studio · feito com carinho no Brasil 🇧🇷
+          <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-cream/80 backdrop-blur border border-ink/10 shadow-[0_10px_30px_-12px_oklch(0_0_0/0.2)]">
+            <span className="relative flex size-2">
+              <span className="absolute inline-flex h-full w-full rounded-full bg-sage opacity-75 animate-ping" />
+              <span className="relative inline-flex rounded-full size-2 bg-sage" />
+            </span>
+            <span className="font-mono text-[10px] uppercase tracking-[0.24em] text-ink/80">
+              001 — Now cooking
+            </span>
+          </div>
         </motion.div>
 
-        <h1 className="font-display font-light leading-[0.85] tracking-[-0.04em] text-ink">
-          <span className="block text-[clamp(3.5rem,14vw,13rem)]">
-            {title.split("").map((ch, i) => (
-              <motion.span
-                key={i}
-                initial={{ y: "100%", opacity: 0, rotate: -8 }}
-                animate={{ y: 0, opacity: 1, rotate: 0 }}
-                transition={{
-                  delay: 0.1 + i * 0.05,
-                  duration: 0.9,
-                  ease: [0.22, 1, 0.36, 1],
-                }}
-                whileHover={{ rotate: [0, -6, 6, 0], color: "var(--wine)" }}
-                className="inline-block cursor-default origin-bottom"
-                style={{ fontStyle: ch === "B" || ch === "X" ? "italic" : "normal" }}
-              >
-                {ch === " " ? "\u00A0" : ch}
-              </motion.span>
-            ))}
+        {/* Headline — Bepp style: huge mixed weight with inline chips */}
+        <motion.h1
+          style={{ y: yTitle }}
+          className="font-display text-center leading-[0.88] tracking-[-0.03em] text-ink text-[clamp(3rem,10vw,10.5rem)]"
+        >
+          {/* Line 1 */}
+          <span className="block overflow-hidden">
+            <motion.span
+              initial={{ y: "110%" }}
+              animate={{ y: "0%" }}
+              transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
+              className="inline-block italic font-normal"
+            >
+              We craft
+            </motion.span>
           </span>
-        </h1>
 
+          {/* Line 2 — chip + text */}
+          <span className="block overflow-hidden">
+            <motion.span
+              initial={{ y: "110%" }}
+              animate={{ y: "0%" }}
+              transition={{ duration: 1, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+              className="inline-flex items-center gap-3 md:gap-5 align-middle"
+            >
+              <motion.span
+                style={{ y: yChip, rotate: rotChip }}
+                whileHover={{ scale: 1.06, rotate: -4 }}
+                className="bepp-chip inline-block size-[0.85em] shrink-0 -translate-y-[0.05em]"
+                aria-label="Happy Town"
+              >
+                <img
+                  src={happyTown.url}
+                  alt=""
+                  className="w-full h-full object-cover"
+                />
+              </motion.span>
+              <span className="font-sans font-normal">psychological</span>
+            </motion.span>
+          </span>
+
+          {/* Line 3 */}
+          <span className="block overflow-hidden">
+            <motion.span
+              initial={{ y: "110%" }}
+              animate={{ y: "0%" }}
+              transition={{ duration: 1, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+              className="inline-block"
+            >
+              <span className="italic font-normal">horror</span>{" "}
+              <span className="font-sans font-normal">on Roblox</span>
+            </motion.span>
+          </span>
+        </motion.h1>
+
+        {/* Subline + CTA */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.9, duration: 0.8 }}
-          className="mt-10 flex flex-col md:flex-row md:items-end md:justify-between gap-8"
+          transition={{ delay: 1.1, duration: 0.8 }}
+          className="mt-14 md:mt-20 flex flex-col items-center gap-8"
         >
-          <p className="max-w-md text-base md:text-lg text-ink/75 leading-relaxed">
-            Um studio brasileiro independente no Roblox. A gente faz jogo com{" "}
-            <em className="text-wine not-italic font-semibold">atmosfera</em>, alma e
-            aquela pitada de bagunça que só sai por aqui.
+          <p className="max-w-lg text-center text-base md:text-lg text-ink/70 leading-relaxed">
+            Six Bullets is a seven-person crew building <span className="marker-wine font-medium text-ink">Happy Town</span> — a slow-burn horror project where the town smiles first and asks questions later.
           </p>
-          <div className="flex flex-wrap gap-3">
+
+          <div className="flex flex-wrap items-center justify-center gap-3">
             <motion.a
-              whileHover={{ scale: 1.05, rotate: -1 }}
+              whileHover={{ scale: 1.04 }}
               whileTap={{ scale: 0.97 }}
               href="#happy-town"
-              className="group relative inline-flex items-center gap-3 px-6 py-3 bg-ink text-cream font-mono text-xs uppercase tracking-[0.2em] rounded-full hover:bg-wine transition-colors"
+              className="group relative inline-flex items-center gap-3 pl-6 pr-2 py-2 bg-ink text-cream font-mono text-[11px] uppercase tracking-[0.22em] rounded-full hover:bg-wine transition-colors"
             >
-              Ver Happy Town
-              <span className="transition-transform group-hover:translate-x-1">→</span>
+              Enter Happy Town
+              <span className="inline-flex items-center justify-center size-9 rounded-full bg-cream text-ink group-hover:translate-x-1 transition-transform">
+                →
+              </span>
             </motion.a>
             <motion.a
-              whileHover={{ scale: 1.05, rotate: 1 }}
+              whileHover={{ scale: 1.04 }}
               whileTap={{ scale: 0.97 }}
-              href="#contato"
-              className="inline-flex items-center gap-3 px-6 py-3 border-2 border-ink text-ink font-mono text-xs uppercase tracking-[0.2em] rounded-full hover:bg-butter transition-colors"
+              href="#equipe"
+              className="inline-flex items-center gap-3 px-6 py-3 rounded-full font-mono text-[11px] uppercase tracking-[0.22em] text-ink/80 hover:text-ink transition-colors"
             >
-              Entrar no Discord
+              Meet the crew ↓
             </motion.a>
           </div>
         </motion.div>
       </div>
 
-      <div className="relative max-w-7xl mx-auto px-6 lg:px-10 w-full mt-24 pb-10 flex items-end justify-between text-[10px] font-mono uppercase tracking-[0.3em] text-ink/50">
-        <span>↓ Role pra ver</span>
-        <span className="hidden sm:inline">São Paulo · BR</span>
-      </div>
+      {/* Bottom mini-info */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1.4, duration: 1 }}
+        className="relative max-w-[1400px] mx-auto px-6 lg:px-12 w-full mt-16 pb-10 flex items-end justify-between text-[10px] font-mono uppercase tracking-[0.3em] text-ink/45"
+      >
+        <span className="flex items-center gap-2">
+          <span className="inline-block h-px w-8 bg-ink/30" /> Scroll
+        </span>
+        <span className="hidden sm:inline">Six Bullets Studio · Est. 2024</span>
+      </motion.div>
     </section>
   );
 }
