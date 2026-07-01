@@ -1,44 +1,32 @@
-import game1 from "@/assets/game-1.jpg";
+import samuca from "@/assets/devs/samuca.png.asset.json";
+import francez from "@/assets/devs/francez.png.asset.json";
+import stray from "@/assets/devs/stray.png.asset.json";
+import syntax from "@/assets/devs/syntax.png.asset.json";
+import zark from "@/assets/devs/zark.png.asset.json";
+import marpuf from "@/assets/devs/marpuf.gif.asset.json";
+import thugo from "@/assets/devs/thugo.png.asset.json";
 
 export type Dev = {
   name: string;
   role: string;
   tag: "Founders" | "Management" | "Dev" | "Art" | "Audio";
   color: "wine" | "butter" | "sage" | "blush" | "sky";
+  avatar?: string;
 };
 
 export const devs: Dev[] = [
-  { name: "Francez", role: "Founder · Project Manager · UI & Game Designer", tag: "Founders", color: "wine" },
-  { name: "Samuca", role: "Founder · Project Manager · Game Designer", tag: "Founders", color: "butter" },
-  { name: "Zark", role: "Sub Owner · GFX Artist", tag: "Founders", color: "blush" },
-  { name: "Thugo", role: "Server Manager", tag: "Management", color: "sage" },
-  { name: "Marpuf", role: "Community Manager", tag: "Management", color: "sky" },
-  { name: "Yuki", role: "Lead Dev · Modeler", tag: "Dev", color: "wine" },
-  { name: "Stray", role: "Lead Dev · Modeler & Builder", tag: "Dev", color: "butter" },
-  { name: "Syntax", role: "Programmer", tag: "Dev", color: "sage" },
-  { name: "Squidnoodles", role: "Scripter", tag: "Dev", color: "blush" },
-  { name: "Thug", role: "Animator", tag: "Art", color: "sky" },
-  { name: "Whirle", role: "Animator", tag: "Art", color: "wine" },
-  { name: "Poli", role: "SFX Artist · Music Composer", tag: "Audio", color: "butter" },
-  { name: "Melo", role: "Builder", tag: "Dev", color: "sage" },
-  { name: "Japa", role: "Game Designer", tag: "Dev", color: "blush" },
-];
-
-export type Game = {
-  title: string;
-  status: "Em desenvolvimento" | "Lançado" | "Em breve";
-  description: string;
-  cover: string;
-  href: string;
-};
-
-export const games: Game[] = [
-  {
-    title: "Happy Town",
-    status: "Em desenvolvimento",
-    description:
-      "Horror psicológico cooperativo numa cidade pacata que esconde algo profundamente errado. Inspirado em Silent Hill, The Mimic e The Mystery of Duvall Drive.",
-    cover: game1,
-    href: "#",
-  },
+  { name: "Francez",  role: "Founder · Project Manager · UI & Game Designer", tag: "Founders",   color: "wine",   avatar: francez.url },
+  { name: "Samuca",   role: "Founder · Project Manager · Game Designer",       tag: "Founders",   color: "butter", avatar: samuca.url },
+  { name: "Zark",     role: "Sub Owner · GFX Artist",                          tag: "Founders",   color: "blush",  avatar: zark.url },
+  { name: "Thugo",    role: "Server Manager",                                  tag: "Management", color: "sage",   avatar: thugo.url },
+  { name: "Marpuf",   role: "Community Manager",                               tag: "Management", color: "sky",    avatar: marpuf.url },
+  { name: "Yuki",     role: "Lead Dev · Modeler",                              tag: "Dev",        color: "wine" },
+  { name: "Stray",    role: "Lead Dev · Modeler & Builder",                    tag: "Dev",        color: "butter", avatar: stray.url },
+  { name: "Syntax",   role: "Programmer",                                      tag: "Dev",        color: "sage",   avatar: syntax.url },
+  { name: "Drigo",    role: "Programmer",                                      tag: "Dev",        color: "blush" },
+  { name: "Thug",     role: "Animator",                                        tag: "Art",        color: "sky" },
+  { name: "Whirle",   role: "Animator",                                        tag: "Art",        color: "wine" },
+  { name: "Poli",     role: "SFX Artist · Music Composer",                     tag: "Audio",      color: "butter" },
+  { name: "Melo",     role: "Builder",                                         tag: "Dev",        color: "sage" },
+  { name: "Japa",     role: "Game Designer",                                   tag: "Dev",        color: "blush" },
 ];
