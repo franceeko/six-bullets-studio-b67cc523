@@ -4,8 +4,8 @@ import { SectionHeader } from "./SectionHeader";
 const stats = [
   { value: "14", label: "Crew", color: "bg-butter" },
   { value: "01", label: "Project in cook", color: "bg-wine-soft" },
-  { value: "∞", label: "Rewrites at 4am", color: "bg-sage" },
-  { value: "24", label: "Est. year", color: "bg-blush" },
+  { value: "—", label: "CCU", color: "bg-sage" },
+  { value: "—", label: "Visits", color: "bg-blush" },
 ];
 
 export function About() {
@@ -23,13 +23,11 @@ export function About() {
             className="md:col-span-7 space-y-6 text-xl md:text-2xl text-ink/85 leading-relaxed font-display italic font-normal"
           >
             <p>
-              <span className="marker-wine not-italic font-sans text-ink font-medium">Six Bullets</span> — a
-              seven-person crew of devs, artists and one composer who kept sending demos at 3am until
-              we let him in.
+              <span className="marker-wine not-italic font-sans text-ink font-medium">Six Bullets</span> —
+              a Roblox studio focused on cinematic, slow-burn experiences.
             </p>
             <p className="text-lg md:text-xl not-italic font-sans text-ink/70 leading-relaxed">
-              We ship one game at a time. Right now every hand is on Happy Town: modeling streets, scoring
-              silence, breaking the same script three different ways until one of them scares us back.
+              One project at a time, built end-to-end in-house: design, code, models, animation and sound.
             </p>
           </motion.div>
 
@@ -42,7 +40,7 @@ export function About() {
                 whileHover={{ y: -6 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.08, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-                className={`${s.color} rounded-2xl p-5 md:p-6 border border-ink/10`}
+                className={`${s.color} rounded-2xl p-5 md:p-6 border border-ink/10 gpu`}
                 style={{
                   boxShadow: "0 20px 40px -22px oklch(0 0 0 / 0.35), 0 1px 0 oklch(1 0 0 / 0.8) inset",
                 }}
