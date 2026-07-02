@@ -105,6 +105,13 @@
   }
 }
 
+/* GPU-accelerated layer — force compositor promotion for smooth animation on low-end devices */
+@utility gpu {
+  will-change: transform, opacity;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
 /* Fine subtle noise, less oppressive than before */
 @utility grain {
   position: fixed;

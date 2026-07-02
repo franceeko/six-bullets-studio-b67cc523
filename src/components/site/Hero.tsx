@@ -82,8 +82,11 @@ export function Hero() {
                 <img
                   src={happyTown.url}
                   alt=""
+                  loading="eager"
+                  decoding="async"
                   className="w-full h-full object-cover"
                 />
+
               </motion.span>
               <span className="font-sans font-normal">psychological</span>
             </motion.span>
@@ -148,7 +151,7 @@ export function Hero() {
         <span className="flex items-center gap-2">
           <span className="inline-block h-px w-8 bg-ink/30" /> Scroll
         </span>
-        <span className="hidden sm:inline">Six Bullets Studio · Est. 2024</span>
+        <span className="hidden sm:inline">Six Bullets Studio</span>
       </motion.div>
     </section>
   );
