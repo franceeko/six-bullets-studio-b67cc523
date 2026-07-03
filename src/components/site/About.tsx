@@ -3,16 +3,16 @@ import { SectionHeader } from "./SectionHeader";
 
 const stats = [
   { value: "14", label: "Crew", color: "bg-butter" },
-  { value: "01", label: "Project in cook", color: "bg-wine-soft" },
+  { value: "01", label: "Project", color: "bg-wine-soft" },
   { value: "—", label: "CCU", color: "bg-sage" },
   { value: "—", label: "Visits", color: "bg-blush" },
 ];
 
 export function About() {
   return (
-    <section id="sobre" className="relative py-32 md:py-44">
+    <section id="sobre" className="section-lazy relative py-32 md:py-44">
       <div className="max-w-[1400px] mx-auto px-6 lg:px-12">
-        <SectionHeader number="001" kicker="Studio" title="Small crew, sharp aim." accent="butter" />
+        <SectionHeader number="001" kicker="Studio" title="Small crew. Sharp aim." accent="butter" />
 
         <div className="grid md:grid-cols-12 gap-10 md:gap-16">
           <motion.div
@@ -20,14 +20,13 @@ export function About() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
-            className="md:col-span-7 space-y-6 text-xl md:text-2xl text-ink/85 leading-relaxed font-display italic font-normal"
+            className="md:col-span-7 space-y-5 text-xl md:text-2xl text-ink/85 leading-relaxed font-display italic font-normal"
           >
             <p>
-              <span className="marker-wine not-italic font-sans text-ink font-medium">Six Bullets</span> —
-              a Roblox studio focused on cinematic, slow-burn experiences.
+              <span className="marker-wine not-italic font-sans text-ink font-medium">Six Bullets</span> — a Roblox studio.
             </p>
             <p className="text-lg md:text-xl not-italic font-sans text-ink/70 leading-relaxed">
-              One project at a time, built end-to-end in-house: design, code, models, animation and sound.
+              One project. In-house from design to sound.
             </p>
           </motion.div>
 
@@ -37,7 +36,7 @@ export function About() {
                 key={s.label}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                whileHover={{ y: -6 }}
+                whileHover={{ y: -6, rotate: i % 2 ? 1.5 : -1.5 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.08, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
                 className={`${s.color} rounded-2xl p-5 md:p-6 border border-ink/10 gpu`}

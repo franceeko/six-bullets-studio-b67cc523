@@ -11,7 +11,7 @@ export function Contact() {
   return (
     <section
       id="contato"
-      className="relative py-32 md:py-48 overflow-hidden border-t border-ink/10"
+      className="section-lazy relative py-32 md:py-48 overflow-hidden border-t border-ink/10"
     >
       <div className="light-rays" aria-hidden />
 
@@ -38,9 +38,10 @@ export function Contact() {
           <span className="italic">Come</span> <span className="italic marker-wine">whisper.</span>
         </motion.h2>
 
-        <p className="mt-8 max-w-xl mx-auto text-base md:text-lg text-ink/70">
-          The Discord's open. Playtests, sneak peeks, screams into the void — bring whatever you've got.
+        <p className="mt-8 max-w-md mx-auto text-base md:text-lg text-ink/70">
+          Discord's open.
         </p>
+
 
         <div className="mt-12 flex flex-wrap justify-center gap-3">
           {socials.map((s, i) => (
