@@ -6,13 +6,14 @@ export function HappyTown() {
   const ref = useRef<HTMLElement>(null);
   const reduce = useReducedMotion();
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
-  const bannerY = useTransform(scrollYProgress, [0, 1], reduce ? ["0%", "0%"] : ["-6%", "6%"]);
+  const bannerY = useTransform(scrollYProgress, [0, 1], reduce ? ["0%", "0%"] : ["-8%", "8%"]);
+  const chromeY = useTransform(scrollYProgress, [0, 1], reduce ? ["0%", "0%"] : ["20%", "-20%"]);
 
   return (
     <section
       ref={ref}
       id="happy-town"
-      className="relative py-32 md:py-44 bg-cream overflow-hidden"
+      className="section-lazy relative py-32 md:py-44 overflow-hidden"
     >
       <div className="max-w-[1400px] mx-auto px-6 lg:px-12">
         <motion.div
@@ -39,28 +40,31 @@ export function HappyTown() {
           transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
           className="relative rounded-[28px] overflow-hidden border border-ink/15 shadow-[0_40px_80px_-30px_oklch(0_0_0/0.55)] gpu"
         >
-          <div className="relative aspect-[16/9] md:aspect-[21/9] bg-ink">
+          <div className="relative aspect-[16/9] md:aspect-[21/9] bg-ink overflow-hidden">
             <motion.img
               src={happyTown.url}
               alt="Happy Town key art"
               loading="lazy"
               decoding="async"
-              style={{ y: bannerY }}
+              style={{ y: bannerY, scale: 1.15 }}
               className="absolute inset-0 w-full h-full object-cover gpu"
             />
 
-            {/* Smooth cinematic fade — single soft gradient, no seams */}
+            {/* Cinematic vignette — clean radial, no seams */}
             <div
               aria-hidden
               className="absolute inset-0 pointer-events-none"
               style={{
                 background:
-                  "linear-gradient(180deg, oklch(0 0 0 / 0.15) 0%, transparent 30%, transparent 60%, oklch(0 0 0 / 0.55) 100%)",
+                  "radial-gradient(120% 90% at 50% 20%, transparent 55%, oklch(0 0 0 / 0.55) 100%)",
               }}
             />
 
             {/* Overlay chrome */}
-            <div className="absolute top-5 left-5 md:top-7 md:left-7 flex items-center gap-2 px-3 py-1.5 rounded-full bg-cream/90 backdrop-blur border border-ink/10">
+            <motion.div
+              style={{ y: chromeY }}
+              className="absolute top-5 left-5 md:top-7 md:left-7 flex items-center gap-2 px-3 py-1.5 rounded-full bg-cream/90 backdrop-blur border border-ink/10"
+            >
               <span className="relative flex size-1.5">
                 <span className="absolute inline-flex h-full w-full rounded-full bg-wine opacity-75 animate-ping" />
                 <span className="relative inline-flex rounded-full size-1.5 bg-wine" />
@@ -68,28 +72,12 @@ export function HappyTown() {
               <span className="font-mono text-[9px] uppercase tracking-[0.28em] text-ink">
                 In production
               </span>
-            </div>
+            </motion.div>
 
             <div className="absolute bottom-5 right-5 md:bottom-7 md:right-7 font-mono text-[10px] uppercase tracking-[0.24em] text-cream/85">
               6B · HT-001
             </div>
           </div>
-        </motion.div>
-
-        {/* Short pitch — no long paragraphs */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
-          className="mt-12 md:mt-16 max-w-2xl"
-        >
-          <p className="font-display italic text-2xl md:text-3xl leading-[1.2] text-ink">
-            A small town. Empty streets. Neighbours who greet you by name.
-          </p>
-          <p className="mt-4 text-ink/70 leading-relaxed">
-            A cooperative psychological horror experience — cinematic, quiet, and built entirely inside Roblox.
-          </p>
         </motion.div>
       </div>
     </section>

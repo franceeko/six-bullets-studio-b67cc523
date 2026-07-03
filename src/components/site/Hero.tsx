@@ -113,9 +113,10 @@ export function Hero() {
           transition={{ delay: 1.1, duration: 0.8 }}
           className="mt-14 md:mt-20 flex flex-col items-center gap-8"
         >
-          <p className="max-w-lg text-center text-base md:text-lg text-ink/70 leading-relaxed">
-            Six Bullets is a seven-person crew building <span className="marker-wine font-medium text-ink">Happy Town</span> — a slow-burn horror project where the town smiles first and asks questions later.
+          <p className="max-w-md text-center text-base md:text-lg text-ink/70 leading-relaxed">
+            Now cooking <span className="marker-wine font-medium text-ink">Happy Town</span>.
           </p>
+
 
           <div className="flex flex-wrap items-center justify-center gap-3">
             <motion.a

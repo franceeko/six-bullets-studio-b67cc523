@@ -112,6 +112,22 @@
   backface-visibility: hidden;
 }
 
+/* Skip rendering off-screen sections — browser only paints what's visible */
+@utility section-lazy {
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 900px;
+}
+
+/* Subtle background noise so the cream isn't dead flat */
+@utility cream-tex {
+  background-color: var(--cream);
+  background-image:
+    radial-gradient(oklch(0.16 0.02 20 / 0.045) 1px, transparent 1.4px),
+    radial-gradient(oklch(0.38 0.18 20 / 0.05) 1px, transparent 1.6px);
+  background-size: 26px 26px, 42px 42px;
+  background-position: 0 0, 13px 13px;
+}
+
 /* Fine subtle noise, less oppressive than before */
 @utility grain {
   position: fixed;
@@ -221,6 +237,44 @@
   50% { opacity: 0.7; }
   100% { transform: translateX(40px); opacity: 0; }
 }
+
+/* Per-member card vibes — different gradient wash per accent color */
+@utility vibe-wine {
+  background:
+    radial-gradient(120% 90% at 0% 0%, oklch(0.38 0.18 20 / 0.12), transparent 55%),
+    radial-gradient(80% 60% at 100% 100%, oklch(0.86 0.05 20 / 0.6), transparent 60%),
+    var(--cream);
+}
+@utility vibe-butter {
+  background:
+    radial-gradient(120% 90% at 100% 0%, oklch(0.88 0.11 88 / 0.55), transparent 55%),
+    radial-gradient(80% 60% at 0% 100%, oklch(0.965 0.008 80), transparent 60%),
+    var(--cream);
+}
+@utility vibe-sage {
+  background:
+    radial-gradient(120% 90% at 0% 100%, oklch(0.78 0.07 155 / 0.45), transparent 55%),
+    radial-gradient(80% 60% at 100% 0%, oklch(0.965 0.008 80), transparent 60%),
+    var(--cream);
+}
+@utility vibe-blush {
+  background:
+    radial-gradient(120% 90% at 50% 0%, oklch(0.86 0.08 25 / 0.5), transparent 55%),
+    radial-gradient(90% 70% at 0% 100%, oklch(0.965 0.008 80), transparent 60%),
+    var(--cream);
+}
+@utility vibe-sky {
+  background:
+    radial-gradient(120% 90% at 100% 100%, oklch(0.82 0.08 230 / 0.45), transparent 55%),
+    radial-gradient(80% 60% at 0% 0%, oklch(0.965 0.008 80), transparent 60%),
+    var(--cream);
+}
+
+@keyframes orbit {
+  from { transform: rotate(0deg) translateX(var(--r, 40px)) rotate(0deg); }
+  to   { transform: rotate(360deg) translateX(var(--r, 40px)) rotate(-360deg); }
+}
+.orbit { animation: orbit 12s linear infinite; }
 
 /* Glossy chip that mimics cloudbepp app icons */
 @utility bepp-chip {

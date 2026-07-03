@@ -11,6 +11,7 @@ import thug from "@/assets/devs/thug.png.asset.json";
 import whirle from "@/assets/devs/whirle.png.asset.json";
 import melo from "@/assets/devs/melo.png.asset.json";
 import japa from "@/assets/devs/japa.png.asset.json";
+import poli from "@/assets/devs/poli.gif.asset.json";
 
 export type Dev = {
   name: string;
@@ -32,7 +33,7 @@ export const devs: Dev[] = [
   { name: "Drigo",    role: "Programmer",                                      tag: "Dev",        color: "blush",  avatar: drigo.url },
   { name: "Thug",     role: "Animator",                                        tag: "Art",        color: "sky",    avatar: thug.url },
   { name: "Whirle",   role: "Animator",                                        tag: "Art",        color: "wine",   avatar: whirle.url },
-  { name: "Poli",     role: "SFX Artist · Music Composer",                     tag: "Audio",      color: "butter" },
+  { name: "Poli",     role: "SFX Artist · Music Composer",                     tag: "Audio",      color: "butter", avatar: poli.url },
   { name: "Melo",     role: "Builder",                                         tag: "Dev",        color: "sage",   avatar: melo.url },
   { name: "Japa",     role: "Game Designer",                                   tag: "Dev",        color: "blush",  avatar: japa.url },
 ];
