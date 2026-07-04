@@ -9,6 +9,12 @@ const vibeMap: Record<Dev["color"], string> = {
   sage: "vibe-sage",
   blush: "vibe-blush",
   sky: "vibe-sky",
+  plum: "vibe-plum",
+  teal: "vibe-teal",
+  coral: "vibe-coral",
+  moss: "vibe-moss",
+  amber: "vibe-amber",
+  lilac: "vibe-lilac",
 };
 
 const dotMap: Record<Dev["color"], string> = {
@@ -17,6 +23,12 @@ const dotMap: Record<Dev["color"], string> = {
   sage: "bg-sage",
   blush: "bg-blush",
   sky: "bg-sky",
+  plum: "bg-plum",
+  teal: "bg-teal",
+  coral: "bg-coral",
+  moss: "bg-moss",
+  amber: "bg-amber",
+  lilac: "bg-lilac",
 };
 
 function initials(name: string) {
