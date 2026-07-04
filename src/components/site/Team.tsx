@@ -89,8 +89,15 @@ function TeamCard({ dev, index }: { dev: Dev; index: number }) {
       viewport={{ once: true, margin: "-60px" }}
       transition={{ delay: (index % 8) * 0.04, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
       whileHover="hover"
-      style={{ rotateX: rx, rotateY: ry, transformPerspective: 900 }}
-      className={`group relative ${vibeMap[dev.color]} rounded-[22px] p-5 md:p-6 border border-ink/10 overflow-hidden cursor-default gpu`}
+      style={{
+        rotateX: rx,
+        rotateY: ry,
+        transformPerspective: 900,
+        transformStyle: "preserve-3d",
+        boxShadow:
+          "0 1px 0 oklch(1 0 0 / 0.6) inset, 0 0 0 1px oklch(0.16 0.02 20 / 0.08), 0 30px 60px -30px oklch(0 0 0 / 0.35)",
+      }}
+      className={`group relative ${vibeMap[dev.color]} rounded-[22px] p-5 md:p-6 overflow-hidden cursor-default gpu`}
     >
       {/* Index */}
       <div className="absolute top-4 right-4 font-mono text-[10px] tracking-[0.24em] text-ink/40">
