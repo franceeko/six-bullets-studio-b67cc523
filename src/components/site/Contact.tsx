@@ -1,10 +1,10 @@
 import { motion } from "framer-motion";
 
 const socials = [
-  { label: "Discord", href: "#" },
-  { label: "X / Twitter", href: "#" },
-  { label: "YouTube", href: "#" },
-  { label: "Roblox Group", href: "#" },
+  { label: "Discord", href: "https://discord.gg/ZWZuJVmRMF" },
+  { label: "Roblox Group", href: "https://www.roblox.com/share/g/470296267" },
+  { label: "X / Twitter", href: "#", soon: true },
+  { label: "YouTube", href: "#", soon: true },
 ];
 
 export function Contact() {
