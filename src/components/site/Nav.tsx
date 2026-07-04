@@ -44,7 +44,9 @@ export function Nav() {
         </ul>
 
         <a
-          href="#contato"
+          href="https://discord.gg/ZWZuJVmRMF"
+          target="_blank"
+          rel="noopener noreferrer"
           className="group inline-flex items-center gap-2 pl-4 pr-1.5 py-1.5 bg-ink text-cream font-mono text-[10px] uppercase tracking-[0.22em] rounded-full hover:bg-wine transition-colors"
         >
           Discord

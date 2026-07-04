@@ -9,6 +9,12 @@ const vibeMap: Record<Dev["color"], string> = {
   sage: "vibe-sage",
   blush: "vibe-blush",
   sky: "vibe-sky",
+  plum: "vibe-plum",
+  teal: "vibe-teal",
+  coral: "vibe-coral",
+  moss: "vibe-moss",
+  amber: "vibe-amber",
+  lilac: "vibe-lilac",
 };
 
 const dotMap: Record<Dev["color"], string> = {
@@ -17,6 +23,12 @@ const dotMap: Record<Dev["color"], string> = {
   sage: "bg-sage",
   blush: "bg-blush",
   sky: "bg-sky",
+  plum: "bg-plum",
+  teal: "bg-teal",
+  coral: "bg-coral",
+  moss: "bg-moss",
+  amber: "bg-amber",
+  lilac: "bg-lilac",
 };
 
 function initials(name: string) {
@@ -77,8 +89,15 @@ function TeamCard({ dev, index }: { dev: Dev; index: number }) {
       viewport={{ once: true, margin: "-60px" }}
       transition={{ delay: (index % 8) * 0.04, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
       whileHover="hover"
-      style={{ rotateX: rx, rotateY: ry, transformPerspective: 900 }}
-      className={`group relative ${vibeMap[dev.color]} rounded-[22px] p-5 md:p-6 border border-ink/10 overflow-hidden cursor-default gpu`}
+      style={{
+        rotateX: rx,
+        rotateY: ry,
+        transformPerspective: 900,
+        transformStyle: "preserve-3d",
+        boxShadow:
+          "0 1px 0 oklch(1 0 0 / 0.6) inset, 0 0 0 1px oklch(0.16 0.02 20 / 0.08), 0 30px 60px -30px oklch(0 0 0 / 0.35)",
+      }}
+      className={`group relative ${vibeMap[dev.color]} rounded-[22px] p-5 md:p-6 overflow-hidden cursor-default gpu`}
     >
       {/* Index */}
       <div className="absolute top-4 right-4 font-mono text-[10px] tracking-[0.24em] text-ink/40">
@@ -97,8 +116,11 @@ function TeamCard({ dev, index }: { dev: Dev; index: number }) {
       <motion.div
         variants={{ hover: { y: -6, rotate: index % 2 ? 3 : -3 } }}
         transition={{ type: "spring", stiffness: 260, damping: 18 }}
-        className="relative size-24 md:size-28 rounded-full overflow-hidden border border-ink/10 mt-6 mb-5 bg-cream mx-auto gpu"
-        style={{ transform: "translateZ(30px)" }}
+        className="relative size-24 md:size-28 rounded-full overflow-hidden mt-6 mb-5 bg-cream mx-auto gpu"
+        style={{
+          transform: "translateZ(30px)",
+          boxShadow: "0 0 0 1px oklch(0.16 0.02 20 / 0.1), 0 12px 24px -12px oklch(0 0 0 / 0.3)",
+        }}
       >
         <Avatar dev={dev} />
       </motion.div>

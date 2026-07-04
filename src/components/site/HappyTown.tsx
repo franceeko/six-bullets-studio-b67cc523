@@ -38,26 +38,23 @@ export function HappyTown() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
-          className="relative rounded-[28px] overflow-hidden border border-ink/15 shadow-[0_40px_80px_-30px_oklch(0_0_0/0.55)] gpu"
+          className="relative rounded-[28px] overflow-hidden shadow-[0_40px_80px_-30px_oklch(0_0_0/0.45)] gpu"
         >
-          <div className="relative aspect-[16/9] md:aspect-[21/9] bg-ink overflow-hidden">
+          <div className="relative aspect-[16/9] md:aspect-[21/9] overflow-hidden">
             <motion.img
               src={happyTown.url}
               alt="Happy Town key art"
               loading="lazy"
               decoding="async"
-              style={{ y: bannerY, scale: 1.15 }}
-              className="absolute inset-0 w-full h-full object-cover gpu"
-            />
-
-            {/* Cinematic vignette — clean radial, no seams */}
-            <div
-              aria-hidden
-              className="absolute inset-0 pointer-events-none"
               style={{
-                background:
-                  "radial-gradient(120% 90% at 50% 20%, transparent 55%, oklch(0 0 0 / 0.55) 100%)",
+                y: bannerY,
+                scale: 1.15,
+                WebkitMaskImage:
+                  "linear-gradient(to bottom, black 62%, transparent 100%)",
+                maskImage:
+                  "linear-gradient(to bottom, black 62%, transparent 100%)",
               }}
+              className="absolute inset-0 w-full h-full object-cover gpu"
             />
 
             {/* Overlay chrome */}
@@ -73,10 +70,6 @@ export function HappyTown() {
                 In production
               </span>
             </motion.div>
-
-            <div className="absolute bottom-5 right-5 md:bottom-7 md:right-7 font-mono text-[10px] uppercase tracking-[0.24em] text-cream/85">
-              6B · HT-001
-            </div>
           </div>
         </motion.div>
       </div>
