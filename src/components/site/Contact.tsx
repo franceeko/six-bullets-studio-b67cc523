@@ -48,20 +48,29 @@ export function Contact() {
             <motion.a
               key={s.label}
               href={s.href}
+              target={s.soon ? undefined : "_blank"}
+              rel={s.soon ? undefined : "noopener noreferrer"}
+              onClick={(e) => s.soon && e.preventDefault()}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               whileHover={{ y: -4, scale: 1.03 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.06, duration: 0.5 }}
-              className="group inline-flex items-center gap-3 pl-5 pr-2 py-2 bg-cream text-ink font-mono text-[10px] uppercase tracking-[0.22em] rounded-full border border-ink/15"
+              className={`group inline-flex items-center gap-3 pl-5 pr-2 py-2 bg-cream text-ink font-mono text-[10px] uppercase tracking-[0.22em] rounded-full border border-ink/15 ${s.soon ? "opacity-55 cursor-not-allowed" : ""}`}
               style={{
                 boxShadow: "0 14px 30px -14px oklch(0 0 0 / 0.3), 0 1px 0 oklch(1 0 0 / 0.9) inset",
               }}
             >
               {s.label}
-              <span className="inline-flex items-center justify-center size-8 rounded-full bg-ink text-cream group-hover:bg-wine transition-colors">
-                ↗
-              </span>
+              {s.soon ? (
+                <span className="inline-flex items-center justify-center h-8 px-3 rounded-full bg-ink/70 text-cream text-[9px]">
+                  soon
+                </span>
+              ) : (
+                <span className="inline-flex items-center justify-center size-8 rounded-full bg-ink text-cream group-hover:bg-wine transition-colors">
+                  ↗
+                </span>
+              )}
             </motion.a>
           ))}
         </div>
