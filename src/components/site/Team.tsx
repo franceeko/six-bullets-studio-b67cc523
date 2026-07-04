@@ -116,8 +116,11 @@ function TeamCard({ dev, index }: { dev: Dev; index: number }) {
       <motion.div
         variants={{ hover: { y: -6, rotate: index % 2 ? 3 : -3 } }}
         transition={{ type: "spring", stiffness: 260, damping: 18 }}
-        className="relative size-24 md:size-28 rounded-full overflow-hidden border border-ink/10 mt-6 mb-5 bg-cream mx-auto gpu"
-        style={{ transform: "translateZ(30px)" }}
+        className="relative size-24 md:size-28 rounded-full overflow-hidden mt-6 mb-5 bg-cream mx-auto gpu"
+        style={{
+          transform: "translateZ(30px)",
+          boxShadow: "0 0 0 1px oklch(0.16 0.02 20 / 0.1), 0 12px 24px -12px oklch(0 0 0 / 0.3)",
+        }}
       >
         <Avatar dev={dev} />
       </motion.div>
