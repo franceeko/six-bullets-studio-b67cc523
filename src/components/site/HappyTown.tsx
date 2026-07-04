@@ -40,7 +40,7 @@ export function HappyTown() {
           transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
           className="relative rounded-[28px] overflow-hidden shadow-[0_40px_80px_-30px_oklch(0_0_0/0.45)] gpu"
         >
-          <div className="relative aspect-[16/9] md:aspect-[21/9] bg-ink overflow-hidden">
+          <div className="relative aspect-[16/9] md:aspect-[21/9] overflow-hidden">
             <motion.img
               src={happyTown.url}
               alt="Happy Town key art"
