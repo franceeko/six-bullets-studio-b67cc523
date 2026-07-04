@@ -17,23 +17,23 @@ export type Dev = {
   name: string;
   role: string;
   tag: "Founders" | "Management" | "Dev" | "Art" | "Audio";
-  color: "wine" | "butter" | "sage" | "blush" | "sky";
+  color: "wine" | "butter" | "sage" | "blush" | "sky" | "plum" | "teal" | "coral" | "moss" | "amber" | "lilac";
   avatar?: string;
 };
 
 export const devs: Dev[] = [
   { name: "Francez",  role: "Founder · Project Manager · UI & Game Designer", tag: "Founders",   color: "wine",   avatar: francez.url },
-  { name: "Samuca",   role: "Founder · Project Manager · Game Designer",       tag: "Founders",   color: "butter", avatar: samuca.url },
-  { name: "Zark",     role: "Sub Owner · GFX Artist",                          tag: "Founders",   color: "blush",  avatar: zark.url },
-  { name: "Thugo",    role: "Server Manager",                                  tag: "Management", color: "sage",   avatar: thugo.url },
-  { name: "Marpuf",   role: "Community Manager",                               tag: "Management", color: "sky",    avatar: marpuf.url },
-  { name: "Yuki",     role: "Lead Dev · Modeler",                              tag: "Dev",        color: "wine",   avatar: yuki.url },
+  { name: "Samuca",   role: "Founder · Project Manager · Game Designer",       tag: "Founders",   color: "amber",  avatar: samuca.url },
+  { name: "Zark",     role: "Sub Owner · GFX Artist",                          tag: "Founders",   color: "coral",  avatar: zark.url },
+  { name: "Thugo",    role: "Server Manager",                                  tag: "Management", color: "moss",   avatar: thugo.url },
+  { name: "Marpuf",   role: "Community Manager",                               tag: "Management", color: "teal",   avatar: marpuf.url },
+  { name: "Yuki",     role: "Lead Dev · Modeler",                              tag: "Dev",        color: "plum",   avatar: yuki.url },
   { name: "Stray",    role: "Lead Dev · Modeler & Builder",                    tag: "Dev",        color: "butter", avatar: stray.url },
   { name: "Syntax",   role: "Programmer",                                      tag: "Dev",        color: "sage",   avatar: syntax.url },
-  { name: "Drigo",    role: "Programmer",                                      tag: "Dev",        color: "blush",  avatar: drigo.url },
+  { name: "Drigo",    role: "Programmer",                                      tag: "Dev",        color: "lilac",  avatar: drigo.url },
   { name: "Thug",     role: "Animator",                                        tag: "Art",        color: "sky",    avatar: thug.url },
-  { name: "Whirle",   role: "Animator",                                        tag: "Art",        color: "wine",   avatar: whirle.url },
-  { name: "Poli",     role: "SFX Artist · Music Composer",                     tag: "Audio",      color: "butter", avatar: poli.url },
-  { name: "Melo",     role: "Builder",                                         tag: "Dev",        color: "sage",   avatar: melo.url },
-  { name: "Japa",     role: "Game Designer",                                   tag: "Dev",        color: "blush",  avatar: japa.url },
+  { name: "Whirle",   role: "Animator",                                        tag: "Art",        color: "blush",  avatar: whirle.url },
+  { name: "Poli",     role: "SFX Artist · Music Composer",                     tag: "Audio",      color: "plum",   avatar: poli.url },
+  { name: "Melo",     role: "Builder",                                         tag: "Dev",        color: "teal",   avatar: melo.url },
+  { name: "Japa",     role: "Game Designer",                                   tag: "Dev",        color: "coral",  avatar: japa.url },
 ];
