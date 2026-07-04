@@ -46,18 +46,15 @@ export function HappyTown() {
               alt="Happy Town key art"
               loading="lazy"
               decoding="async"
-              style={{ y: bannerY, scale: 1.15 }}
-              className="absolute inset-0 w-full h-full object-cover gpu"
-            />
-
-            {/* Cinematic vignette — clean radial, no seams */}
-            <div
-              aria-hidden
-              className="absolute inset-0 pointer-events-none"
               style={{
-                background:
-                  "radial-gradient(120% 90% at 50% 20%, transparent 55%, oklch(0 0 0 / 0.55) 100%)",
+                y: bannerY,
+                scale: 1.15,
+                WebkitMaskImage:
+                  "linear-gradient(to bottom, black 62%, transparent 100%)",
+                maskImage:
+                  "linear-gradient(to bottom, black 62%, transparent 100%)",
               }}
+              className="absolute inset-0 w-full h-full object-cover gpu"
             />
 
             {/* Overlay chrome */}
@@ -73,10 +70,6 @@ export function HappyTown() {
                 In production
               </span>
             </motion.div>
-
-            <div className="absolute bottom-5 right-5 md:bottom-7 md:right-7 font-mono text-[10px] uppercase tracking-[0.24em] text-cream/85">
-              6B · HT-001
-            </div>
           </div>
         </motion.div>
       </div>
