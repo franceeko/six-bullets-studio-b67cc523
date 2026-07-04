@@ -130,14 +130,15 @@
   contain-intrinsic-size: 1px 900px;
 }
 
-/* Subtle background noise so the cream isn't dead flat */
+/* Strong tactile background — layered dots + fibrous SVG noise, still readable */
 @utility cream-tex {
   background-color: var(--cream);
   background-image:
-    radial-gradient(oklch(0.16 0.02 20 / 0.045) 1px, transparent 1.4px),
-    radial-gradient(oklch(0.38 0.18 20 / 0.05) 1px, transparent 1.6px);
-  background-size: 26px 26px, 42px 42px;
-  background-position: 0 0, 13px 13px;
+    radial-gradient(oklch(0.16 0.02 20 / 0.09) 1px, transparent 1.6px),
+    radial-gradient(oklch(0.38 0.18 20 / 0.07) 1px, transparent 1.8px),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='320' height='320'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.11  0 0 0 0 0.06  0 0 0 0 0.08  0 0 0 0.35 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  background-size: 22px 22px, 38px 38px, 320px 320px;
+  background-position: 0 0, 11px 11px, 0 0;
 }
 
 /* Fine subtle noise, less oppressive than before */
