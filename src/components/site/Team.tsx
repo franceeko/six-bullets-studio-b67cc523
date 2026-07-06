@@ -56,10 +56,10 @@ function Avatar({ dev }: { dev: Dev }) {
         transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
         className="w-full h-full object-cover gpu"
       />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_60%,oklch(0_0_0/0.2))]" />
     </>
   );
 }
+
 
 function TeamCard({ dev, index }: { dev: Dev; index: number }) {
   const cardRef = useRef<HTMLElement>(null);
@@ -153,7 +153,7 @@ function TeamCard({ dev, index }: { dev: Dev; index: number }) {
 
 export function Team() {
   return (
-    <section id="equipe" className="section-lazy relative py-32 md:py-44 bg-paper overflow-hidden">
+    <section id="equipe" className="relative py-32 md:py-44 bg-paper overflow-hidden">
       <div className="light-rays opacity-60" aria-hidden />
 
       <div className="relative max-w-[1400px] mx-auto px-6 lg:px-12">

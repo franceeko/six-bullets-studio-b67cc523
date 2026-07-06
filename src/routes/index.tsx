@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useEffect, useRef } from "react";
 import { Nav } from "@/components/site/Nav";
 import { Hero } from "@/components/site/Hero";
 import { Marquee } from "@/components/site/Marquee";
@@ -30,8 +31,35 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    let raf = 0;
+    let tx = 50;
+    let ty = 35;
+    const onMove = (e: PointerEvent) => {
+      const r = el.getBoundingClientRect();
+      tx = ((e.clientX - r.left) / r.width) * 100;
+      ty = ((e.clientY - r.top) / r.height) * 100;
+      if (!raf) {
+        raf = requestAnimationFrame(() => {
+          el.style.setProperty("--mx", `${tx}%`);
+          el.style.setProperty("--my", `${ty}%`);
+          raf = 0;
+        });
+      }
+    };
+    window.addEventListener("pointermove", onMove, { passive: true });
+    return () => {
+      window.removeEventListener("pointermove", onMove);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, []);
+
   return (
-    <div className="relative cream-tex text-ink">
+    <div ref={ref} className="relative cream-tex text-ink">
       <GrainOverlay />
       <Nav />
       <main>
@@ -46,3 +74,4 @@ function Index() {
     </div>
   );
 }
+

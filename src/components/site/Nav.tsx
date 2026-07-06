@@ -16,19 +16,18 @@ export function Nav() {
       className="fixed top-0 inset-x-0 z-50 backdrop-blur-xl bg-cream/60 border-b border-ink/8"
     >
       <nav className="max-w-[1400px] mx-auto px-6 lg:px-12 h-16 md:h-20 flex items-center justify-between">
-        <a href="#top" className="flex items-baseline gap-2 group">
-          <motion.span
-            whileHover={{ rotate: [0, -8, 8, 0] }}
-            transition={{ duration: 0.6 }}
-            className="inline-block font-[var(--font-script)] text-3xl md:text-4xl text-ink leading-none"
+        <a href="#top" className="flex items-baseline gap-2">
+          <span
+            className="inline-block font-[var(--font-script)] text-3xl md:text-4xl text-ink leading-none hover:text-wine transition-colors"
             style={{ fontFamily: "var(--font-script)" }}
           >
             six bullets
-          </motion.span>
+          </span>
           <span className="font-mono text-[10px] uppercase tracking-[0.24em] text-ink/40 hidden md:inline">
             / 6B
           </span>
         </a>
+
 
         <ul className="hidden md:flex items-center gap-8 font-mono text-[11px] uppercase tracking-[0.22em] text-ink/70">
           {links.map((l) => (
