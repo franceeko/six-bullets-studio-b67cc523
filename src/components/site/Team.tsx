@@ -153,7 +153,7 @@ function TeamCard({ dev, index }: { dev: Dev; index: number }) {
 
 export function Team() {
   return (
-    <section id="equipe" className="section-lazy relative py-32 md:py-44 bg-paper overflow-hidden">
+    <section id="equipe" className="relative py-32 md:py-44 bg-paper overflow-hidden">
       <div className="light-rays opacity-60" aria-hidden />
 
       <div className="relative max-w-[1400px] mx-auto px-6 lg:px-12">
