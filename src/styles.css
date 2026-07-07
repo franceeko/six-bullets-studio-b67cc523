@@ -58,23 +58,26 @@
 :root {
   --radius: 0.75rem;
 
-  /* refined cream + wine palette, Bepp-influenced */
-  --cream: oklch(0.965 0.008 80);
-  --paper: oklch(0.935 0.012 75);
-  --ink: oklch(0.16 0.02 20);
-  --wine: oklch(0.38 0.18 20);
-  --wine-deep: oklch(0.24 0.14 20);
-  --wine-soft: oklch(0.86 0.05 20);
-  --butter: oklch(0.88 0.11 88);
-  --sage: oklch(0.78 0.07 155);
-  --blush: oklch(0.86 0.08 25);
-  --sky: oklch(0.82 0.08 230);
-  --plum: oklch(0.62 0.14 320);
-  --teal: oklch(0.68 0.09 195);
-  --coral: oklch(0.78 0.14 45);
-  --moss: oklch(0.58 0.09 140);
-  --amber: oklch(0.82 0.14 65);
-  --lilac: oklch(0.78 0.09 290);
+  /* Warmer, more editorial palette — less pink, more sand/ember */
+  --cream: oklch(0.94 0.014 78);
+  --paper: oklch(0.90 0.020 72);
+  --bone: oklch(0.86 0.024 70);
+  --ink: oklch(0.14 0.02 30);
+  --wine: oklch(0.36 0.16 22);
+  --wine-deep: oklch(0.22 0.12 22);
+  --wine-soft: oklch(0.80 0.06 30);
+  --butter: oklch(0.85 0.11 82);
+  --sage: oklch(0.72 0.07 155);
+  --blush: oklch(0.80 0.07 30);
+  --sky: oklch(0.76 0.08 225);
+  --plum: oklch(0.55 0.12 320);
+  --teal: oklch(0.62 0.09 195);
+  --coral: oklch(0.72 0.13 45);
+  --moss: oklch(0.52 0.09 140);
+  --amber: oklch(0.78 0.13 65);
+  --lilac: oklch(0.72 0.09 290);
+  --ember: oklch(0.58 0.18 40);
+
 
   --background: var(--cream);
   --foreground: var(--ink);
