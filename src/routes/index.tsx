@@ -63,9 +63,11 @@ function Index() {
 
   return (
     <div ref={ref} className="relative cream-tex text-ink">
+      <LiquidBackground />
       <GrainOverlay />
+      <Cursor />
       <Nav />
-      <main>
+      <main className="relative z-10">
         <Hero />
         <Marquee />
         <About />
@@ -75,6 +77,7 @@ function Index() {
       </main>
       <Footer />
     </div>
+
   );
 }
 
