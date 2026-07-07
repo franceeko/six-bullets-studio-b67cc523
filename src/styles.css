@@ -121,7 +121,25 @@
     background: var(--wine);
     color: var(--cream);
   }
+  /* Hide native cursor on precise pointer devices — custom cursor renders in JS */
+  @media (pointer: fine) {
+    html, body { cursor: none; }
+    html a, html button, html [role="button"], html input, html textarea {
+      cursor: none;
+    }
+  }
 }
+
+/* Seamless bridge between sections — soft vertical gradient wash */
+@utility section-bridge {
+  background: linear-gradient(
+    to bottom,
+    var(--cream) 0%,
+    var(--paper) 45%,
+    var(--bone) 100%
+  );
+}
+
 
 /* GPU-accelerated layer — force compositor promotion for smooth animation on low-end devices */
 @utility gpu {
