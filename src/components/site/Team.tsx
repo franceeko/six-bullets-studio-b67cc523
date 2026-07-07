@@ -68,7 +68,7 @@ function TeamCard({ dev, index }: { dev: Dev; index: number }) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-60px" }}
       transition={{ delay: (index % 8) * 0.04, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-      whileHover={{ y: -8 }}
+      variants={{ hover: { y: -8 } }}
       whileHover="hover"
       style={{
         boxShadow:
