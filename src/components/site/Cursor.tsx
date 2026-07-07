@@ -16,26 +16,19 @@ export function Cursor() {
     if (window.matchMedia("(pointer: coarse)").matches) return;
     setEnabled(true);
 
+    let raf = 0;
     let x = window.innerWidth / 2;
     let y = window.innerHeight / 2;
-    let rx = x;
-    let ry = y;
-    let raf = 0;
 
     const onMove = (e: PointerEvent) => {
       x = e.clientX;
       y = e.clientY;
-      if (dot.current) {
-        dot.current.style.transform = `translate3d(${x - 4}px, ${y - 4}px, 0)`;
-      }
-    };
-    const loop = () => {
-      rx += (x - rx) * 0.18;
-      ry += (y - ry) * 0.18;
-      if (ring.current) {
-        ring.current.style.transform = `translate3d(${rx - 18}px, ${ry - 18}px, 0)`;
-      }
-      raf = requestAnimationFrame(loop);
+      if (raf) return;
+      raf = requestAnimationFrame(() => {
+        dot.current?.style.setProperty("transform", `translate3d(${x - 4}px, ${y - 4}px, 0)`);
+        ring.current?.style.setProperty("transform", `translate3d(${x - 18}px, ${y - 18}px, 0)`);
+        raf = 0;
+      });
     };
 
     const onOver = (e: MouseEvent) => {
@@ -48,11 +41,10 @@ export function Cursor() {
 
     window.addEventListener("pointermove", onMove, { passive: true });
     window.addEventListener("mouseover", onOver);
-    raf = requestAnimationFrame(loop);
     return () => {
       window.removeEventListener("pointermove", onMove);
       window.removeEventListener("mouseover", onOver);
-      cancelAnimationFrame(raf);
+      if (raf) cancelAnimationFrame(raf);
     };
   }, []);
 
@@ -69,12 +61,10 @@ export function Cursor() {
       <div
         ref={ring}
         aria-hidden
-        className="pointer-events-none fixed left-0 top-0 z-[80] rounded-full border border-cream mix-blend-difference transition-[width,height,opacity] duration-200"
+        className="pointer-events-none fixed left-0 top-0 z-[80] rounded-full border border-cream mix-blend-difference transition-[width,height,opacity,border-color] duration-150"
         style={{
-          width: hover ? 56 : 36,
-          height: hover ? 56 : 36,
-          marginLeft: hover ? -28 + 18 : 0,
-          marginTop: hover ? -28 + 18 : 0,
+          width: hover ? 44 : 36,
+          height: hover ? 44 : 36,
           opacity: hover ? 0.9 : 0.55,
           willChange: "transform",
         }}

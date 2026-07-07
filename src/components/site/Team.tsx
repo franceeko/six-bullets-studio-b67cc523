@@ -1,5 +1,5 @@
-import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
-import { useRef, useState, type MouseEvent } from "react";
+import { motion } from "framer-motion";
+import { useState } from "react";
 import { SectionHeader } from "./SectionHeader";
 import { devs, type Dev } from "@/data/studio";
 
@@ -62,40 +62,17 @@ function Avatar({ dev }: { dev: Dev }) {
 
 
 function TeamCard({ dev, index }: { dev: Dev; index: number }) {
-  const cardRef = useRef<HTMLElement>(null);
-  const mx = useMotionValue(0);
-  const my = useMotionValue(0);
-  const rx = useSpring(useTransform(my, [-0.5, 0.5], [6, -6]), { stiffness: 200, damping: 20 });
-  const ry = useSpring(useTransform(mx, [-0.5, 0.5], [-6, 6]), { stiffness: 200, damping: 20 });
-
-  const onMove = (e: MouseEvent<HTMLElement>) => {
-    const r = cardRef.current?.getBoundingClientRect();
-    if (!r) return;
-    mx.set((e.clientX - r.left) / r.width - 0.5);
-    my.set((e.clientY - r.top) / r.height - 0.5);
-  };
-  const onLeave = () => {
-    mx.set(0);
-    my.set(0);
-  };
-
   return (
     <motion.article
-      ref={cardRef}
-      onMouseMove={onMove}
-      onMouseLeave={onLeave}
       initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-60px" }}
       transition={{ delay: (index % 8) * 0.04, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+      variants={{ hover: { y: -8 } }}
       whileHover="hover"
       style={{
-        rotateX: rx,
-        rotateY: ry,
-        transformPerspective: 900,
-        transformStyle: "preserve-3d",
         boxShadow:
-          "0 1px 0 oklch(1 0 0 / 0.6) inset, 0 0 0 1px oklch(0.16 0.02 20 / 0.08), 0 30px 60px -30px oklch(0 0 0 / 0.35)",
+          "0 1px 0 oklch(1 0 0 / 0.6) inset, 0 0 0 1px oklch(0 0 0 / 0.12), 0 18px 40px -28px oklch(0 0 0 / 0.45)",
       }}
       className={`group relative ${vibeMap[dev.color]} rounded-[22px] p-5 md:p-6 overflow-hidden cursor-default gpu`}
     >
@@ -118,8 +95,7 @@ function TeamCard({ dev, index }: { dev: Dev; index: number }) {
         transition={{ type: "spring", stiffness: 260, damping: 18 }}
         className="relative size-24 md:size-28 rounded-full overflow-hidden mt-6 mb-5 bg-cream mx-auto gpu"
         style={{
-          transform: "translateZ(30px)",
-          boxShadow: "0 0 0 1px oklch(0.16 0.02 20 / 0.1), 0 12px 24px -12px oklch(0 0 0 / 0.3)",
+          boxShadow: "0 0 0 1px oklch(0 0 0 / 0.14), 0 12px 24px -14px oklch(0 0 0 / 0.35)",
         }}
       >
         <Avatar dev={dev} />
@@ -138,24 +114,13 @@ function TeamCard({ dev, index }: { dev: Dev; index: number }) {
       <p className="mt-3 text-[13px] md:text-sm text-ink/70 leading-relaxed text-center min-h-[3em]">
         {dev.role}
       </p>
-
-      {/* Corner sweep on hover */}
-      <motion.div
-        aria-hidden
-        variants={{ hover: { x: "120%", opacity: 1 } }}
-        initial={{ x: "-40%", opacity: 0 }}
-        transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-        className="pointer-events-none absolute -inset-y-4 -left-1/3 w-1/3 rotate-12 bg-gradient-to-r from-transparent via-white/40 to-transparent"
-      />
     </motion.article>
   );
 }
 
 export function Team() {
   return (
-    <section id="equipe" className="section-bridge relative py-32 md:py-44 overflow-hidden">
-      <div className="light-rays opacity-60" aria-hidden />
-
+    <section id="equipe" className="section-bridge relative py-28 md:py-40 overflow-hidden">
       <div className="relative max-w-[1400px] mx-auto px-6 lg:px-12">
         <SectionHeader
           number="003"

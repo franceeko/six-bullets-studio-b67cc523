@@ -61,25 +61,24 @@
 :root {
   --radius: 0.75rem;
 
-  /* Warmer, more editorial palette — less pink, more sand/ember */
-  --cream: oklch(0.94 0.014 78);
-  --paper: oklch(0.90 0.020 72);
-  --bone: oklch(0.86 0.024 70);
-  --ink: oklch(0.14 0.02 30);
-  --wine: oklch(0.36 0.16 22);
-  --wine-deep: oklch(0.22 0.12 22);
-  --wine-soft: oklch(0.80 0.06 30);
-  --butter: oklch(0.85 0.11 82);
-  --sage: oklch(0.72 0.07 155);
-  --blush: oklch(0.80 0.07 30);
-  --sky: oklch(0.76 0.08 225);
-  --plum: oklch(0.55 0.12 320);
-  --teal: oklch(0.62 0.09 195);
-  --coral: oklch(0.72 0.13 45);
-  --moss: oklch(0.52 0.09 140);
-  --amber: oklch(0.78 0.13 65);
-  --lilac: oklch(0.72 0.09 290);
-  --ember: oklch(0.58 0.18 40);
+  --cream: oklch(0.985 0 0);
+  --paper: oklch(0.955 0 0);
+  --bone: oklch(0.90 0 0);
+  --ink: oklch(0.12 0 0);
+  --wine: oklch(0.20 0 0);
+  --wine-deep: oklch(0.08 0 0);
+  --wine-soft: oklch(0.78 0 0);
+  --butter: oklch(0.84 0 0);
+  --sage: oklch(0.70 0 0);
+  --blush: oklch(0.88 0 0);
+  --sky: oklch(0.62 0 0);
+  --plum: oklch(0.42 0 0);
+  --teal: oklch(0.52 0 0);
+  --coral: oklch(0.74 0 0);
+  --moss: oklch(0.34 0 0);
+  --amber: oklch(0.66 0 0);
+  --lilac: oklch(0.82 0 0);
+  --ember: oklch(0.26 0 0);
 
 
   --background: var(--cream);
@@ -93,13 +92,13 @@
   --secondary: var(--paper);
   --secondary-foreground: var(--ink);
   --muted: var(--paper);
-  --muted-foreground: oklch(0.42 0.03 25);
+  --muted-foreground: oklch(0.42 0 0);
   --accent: var(--butter);
   --accent-foreground: var(--ink);
   --destructive: oklch(0.55 0.22 27);
   --destructive-foreground: var(--cream);
-  --border: oklch(0.16 0.02 20 / 15%);
-  --input: oklch(0.16 0.02 20 / 15%);
+  --border: oklch(0 0 0 / 15%);
+  --input: oklch(0 0 0 / 15%);
   --ring: var(--wine);
 }
 
@@ -134,9 +133,9 @@
 @utility section-bridge {
   background: linear-gradient(
     to bottom,
-    var(--cream) 0%,
-    var(--paper) 45%,
-    var(--bone) 100%
+    var(--paper) 0%,
+    var(--cream) 38%,
+    var(--paper) 100%
   );
 }
 
@@ -158,20 +157,7 @@
 @utility cream-tex {
   position: relative;
   background-color: var(--cream);
-  background-image:
-    radial-gradient(oklch(0.16 0.02 20 / 0.04) 1px, transparent 1.4px),
-    radial-gradient(circle at var(--mx, 50%) var(--my, 35%),
-      oklch(0.38 0.18 20 / 0.09),
-      transparent 45%);
-  background-size: 28px 28px, 100% 100%;
-  background-position: 0 0, 0 0;
-  animation: cream-drift 22s ease-in-out infinite alternate;
-  transition: background-image 0.4s ease-out;
-}
-
-@keyframes cream-drift {
-  0%   { background-position: 0 0, 0 0; }
-  100% { background-position: 14px 10px, 0 0; }
+  background-image: linear-gradient(180deg, var(--cream), var(--paper) 48%, var(--cream));
 }
 
 /* Fine subtle noise, quieter */
@@ -207,8 +193,65 @@
       transparent 30%,
       oklch(0.38 0.18 20 / 0.05) 50%,
       transparent 70%);
-  filter: blur(2px);
-  animation: ray-sweep 22s ease-in-out infinite alternate;
+  opacity: 0.18;
+}
+
+.liquid-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 20% 10%, oklch(0 0 0 / 0.055), transparent 28%),
+    radial-gradient(circle at 80% 72%, oklch(0 0 0 / 0.045), transparent 30%);
+}
+
+.liquid-blob {
+  position: absolute;
+  display: block;
+  border-radius: 999px;
+  background: oklch(0 0 0 / 0.075);
+  will-change: transform, opacity;
+  transform: translateZ(0);
+  contain: layout paint style;
+}
+
+.liquid-blob-a {
+  width: min(56vw, 680px);
+  aspect-ratio: 1.45;
+  left: -14vw;
+  top: 18vh;
+  animation: liquid-drift-a 26s ease-in-out infinite alternate;
+}
+
+.liquid-blob-b {
+  width: min(46vw, 560px);
+  aspect-ratio: 1.25;
+  right: -10vw;
+  bottom: 10vh;
+  background: oklch(0 0 0 / 0.055);
+  animation: liquid-drift-b 31s ease-in-out infinite alternate;
+}
+
+.liquid-cursor {
+  width: 240px;
+  height: 240px;
+  left: 0;
+  top: 0;
+  background: oklch(0 0 0 / 0.06);
+  transform: translate3d(calc(var(--x, 50vw) - 120px), calc(var(--y, 50vh) - 120px), 0);
+  transition: transform 120ms linear;
+}
+
+@keyframes liquid-drift-a {
+  from { transform: translate3d(0, 0, 0) rotate(-8deg) scale(1); }
+  to { transform: translate3d(22vw, 10vh, 0) rotate(10deg) scale(1.08); }
+}
+
+@keyframes liquid-drift-b {
+  from { transform: translate3d(0, 0, 0) rotate(12deg) scale(1); }
+  to { transform: translate3d(-18vw, -8vh, 0) rotate(-6deg) scale(1.1); }
 }
 
 /* Soft dotted paper */
@@ -386,7 +429,7 @@
 
 /* Underlined marker for accent words */
 @utility marker-wine {
-  background-image: linear-gradient(120deg, oklch(0.38 0.18 20 / 0.28), oklch(0.38 0.18 20 / 0.14));
+  background-image: linear-gradient(120deg, oklch(0 0 0 / 0.18), oklch(0 0 0 / 0.08));
   background-repeat: no-repeat;
   background-size: 100% 38%;
   background-position: 0 82%;
@@ -399,3 +442,23 @@
   100% { transform: translateY(0%); }
 }
 .line-reveal { display: inline-block; animation: line-reveal 1s cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+.vibe-wine,
+.vibe-butter,
+.vibe-sage,
+.vibe-blush,
+.vibe-sky,
+.vibe-plum,
+.vibe-teal,
+.vibe-coral,
+.vibe-moss,
+.vibe-amber,
+.vibe-lilac {
+  background:
+    radial-gradient(120% 90% at 0% 0%, oklch(0 0 0 / 0.06), transparent 56%),
+    linear-gradient(135deg, var(--cream), var(--paper));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .liquid-blob { animation: none !important; transition: none !important; }
+}
