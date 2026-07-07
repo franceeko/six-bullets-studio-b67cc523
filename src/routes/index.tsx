@@ -9,6 +9,9 @@ import { Team } from "@/components/site/Team";
 import { Contact } from "@/components/site/Contact";
 import { Footer } from "@/components/site/Footer";
 import { GrainOverlay } from "@/components/site/GrainOverlay";
+import { Cursor } from "@/components/site/Cursor";
+import { LiquidBackground } from "@/components/site/LiquidBackground";
+
 
 export const Route = createFileRoute("/")({
   head: () => ({
