@@ -48,6 +48,9 @@
   --color-moss: var(--moss);
   --color-amber: var(--amber);
   --color-lilac: var(--lilac);
+  --color-bone: var(--bone);
+  --color-ember: var(--ember);
+
 
   --font-display: "Instrument Serif", "Fraunces Variable", ui-serif, Georgia, serif;
   --font-sans: "Space Grotesk", "Inter Tight Variable", ui-sans-serif, system-ui, sans-serif;
