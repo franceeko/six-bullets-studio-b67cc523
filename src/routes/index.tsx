@@ -9,6 +9,9 @@ import { Team } from "@/components/site/Team";
 import { Contact } from "@/components/site/Contact";
 import { Footer } from "@/components/site/Footer";
 import { GrainOverlay } from "@/components/site/GrainOverlay";
+import { Cursor } from "@/components/site/Cursor";
+import { LiquidBackground } from "@/components/site/LiquidBackground";
+
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -60,9 +63,11 @@ function Index() {
 
   return (
     <div ref={ref} className="relative cream-tex text-ink">
+      <LiquidBackground />
       <GrainOverlay />
+      <Cursor />
       <Nav />
-      <main>
+      <main className="relative z-10">
         <Hero />
         <Marquee />
         <About />
@@ -72,6 +77,7 @@ function Index() {
       </main>
       <Footer />
     </div>
+
   );
 }
 
