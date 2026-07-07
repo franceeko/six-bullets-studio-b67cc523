@@ -10,7 +10,7 @@ const stats = [
 
 export function About() {
   return (
-    <section id="sobre" className="section-lazy relative py-32 md:py-44">
+    <section id="sobre" className="relative py-28 md:py-40">
       <div className="max-w-[1400px] mx-auto px-6 lg:px-12">
         <SectionHeader number="001" kicker="Studio" title="Small crew. Sharp aim." accent="butter" />
 

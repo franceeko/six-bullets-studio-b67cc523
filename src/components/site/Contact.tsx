@@ -11,17 +11,8 @@ export function Contact() {
   return (
     <section
       id="contato"
-      className="section-lazy relative py-32 md:py-48 overflow-hidden border-t border-ink/10"
+      className="relative py-28 md:py-44 overflow-hidden border-t border-ink/10 bg-cream"
     >
-      <div className="light-rays" aria-hidden />
-
-      <motion.div
-        aria-hidden
-        animate={{ scale: [1, 1.2, 1], opacity: [0.4, 0.6, 0.4] }}
-        transition={{ duration: 16, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute -top-32 -right-32 size-[36rem] rounded-full bg-wine-soft/50 blur-3xl"
-      />
-
       <div className="relative max-w-[1400px] mx-auto px-6 lg:px-12 text-center">
         <div className="font-mono text-[10px] md:text-xs uppercase tracking-[0.32em] text-ink/60 mb-8 flex items-center justify-center gap-2">
           <span className="inline-block size-1.5 rounded-full bg-wine animate-pulse" />

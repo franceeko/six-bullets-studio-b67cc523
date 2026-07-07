@@ -1,19 +1,11 @@
-import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
-import { useRef } from "react";
+import { motion } from "framer-motion";
 import happyTown from "@/assets/happy-town-banner.png.asset.json";
 
 export function HappyTown() {
-  const ref = useRef<HTMLElement>(null);
-  const reduce = useReducedMotion();
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
-  const bannerY = useTransform(scrollYProgress, [0, 1], reduce ? ["0%", "0%"] : ["-8%", "8%"]);
-  const chromeY = useTransform(scrollYProgress, [0, 1], reduce ? ["0%", "0%"] : ["20%", "-20%"]);
-
   return (
     <section
-      ref={ref}
       id="happy-town"
-      className="section-lazy relative py-32 md:py-44 overflow-hidden"
+      className="relative py-28 md:py-40 overflow-hidden bg-paper"
     >
       <div className="max-w-[1400px] mx-auto px-6 lg:px-12">
         <motion.div
@@ -38,32 +30,30 @@ export function HappyTown() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
-          className="relative rounded-[28px] overflow-hidden shadow-[0_40px_80px_-30px_oklch(0_0_0/0.45)] gpu"
+          className="relative overflow-hidden border-2 border-ink bg-ink gpu"
         >
           <div className="relative aspect-[16/9] md:aspect-[21/9] overflow-hidden">
-            <motion.img
+            <img
               src={happyTown.url}
               alt="Happy Town key art"
               loading="lazy"
               decoding="async"
-              style={{ y: bannerY, scale: 1.15 }}
-              className="absolute inset-0 w-full h-full object-cover gpu"
+              className="absolute inset-0 w-full h-full object-cover"
             />
 
 
             {/* Overlay chrome */}
-            <motion.div
-              style={{ y: chromeY }}
-              className="absolute top-5 left-5 md:top-7 md:left-7 flex items-center gap-2 px-3 py-1.5 rounded-full bg-cream/90 backdrop-blur border border-ink/10"
+            <div
+              className="absolute top-5 left-5 md:top-7 md:left-7 flex items-center gap-2 px-3 py-1.5 rounded-full bg-ink text-cream border border-cream/20"
             >
               <span className="relative flex size-1.5">
-                <span className="absolute inline-flex h-full w-full rounded-full bg-wine opacity-75 animate-ping" />
-                <span className="relative inline-flex rounded-full size-1.5 bg-wine" />
+                <span className="absolute inline-flex h-full w-full rounded-full bg-cream opacity-75 animate-ping" />
+                <span className="relative inline-flex rounded-full size-1.5 bg-cream" />
               </span>
-              <span className="font-mono text-[9px] uppercase tracking-[0.28em] text-ink">
+              <span className="font-mono text-[9px] uppercase tracking-[0.28em]">
                 In production
               </span>
-            </motion.div>
+            </div>
           </div>
         </motion.div>
       </div>
