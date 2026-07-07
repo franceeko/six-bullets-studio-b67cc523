@@ -46,16 +46,10 @@ export function HappyTown() {
               alt="Happy Town key art"
               loading="lazy"
               decoding="async"
-              style={{
-                y: bannerY,
-                scale: 1.15,
-                WebkitMaskImage:
-                  "linear-gradient(to bottom, black 62%, transparent 100%)",
-                maskImage:
-                  "linear-gradient(to bottom, black 62%, transparent 100%)",
-              }}
+              style={{ y: bannerY, scale: 1.15 }}
               className="absolute inset-0 w-full h-full object-cover gpu"
             />
+
 
             {/* Overlay chrome */}
             <motion.div
