@@ -10,7 +10,7 @@ export function Marquee() {
     { t: "✶", c: "text-wine" },
   ];
   return (
-    <div className="relative overflow-hidden border-y border-ink/20 py-5 md:py-6 bg-cream">
+    <div className="relative overflow-hidden border-y border-ink/20 py-5 md:py-6 bg-cream/60 backdrop-blur-[2px]">
       <div className="marquee-track flex w-max gap-12 whitespace-nowrap font-display italic text-4xl md:text-6xl">
         {[...items, ...items, ...items].map((it, i) => (
           <span key={i} className={`${it.c}`}>

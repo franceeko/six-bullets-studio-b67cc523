@@ -1,89 +1,70 @@
 
-# Six Bullets Studio — Site
+# Six Bullets 2.0 — Editorial + Liquid
 
-Single-page site (rolagem suave) em TanStack Start, com seções dedicadas, bastante animação e textura, identidade dark + vinho profissional.
+Mistura o layout atual (nav, hero, Happy Town, team, contato) com a estrutura **editorial cinematográfica** do site do Dembélé: capítulos numerados, títulos serifados gigantes duplicados, clusters de imagens espalhadas, blocos de stats grandes, muito respiro cream + grão.
 
-## Direção visual
+## 1. Novo background líquido (o ponto principal)
 
-- **Paleta** (dark + vinho + claros):
-  - Fundo: `#0b0708` (quase preto com leve toque quente)
-  - Superfície: `#15090c`
-  - Vinho primário: `#7b1e2b`
-  - Vinho destaque/glow: `#a8324a`
-  - Off-white texto: `#f3ece6`
-  - Cinza suave: `#a89a93`
-- **Tipografia**:
-  - Display (títulos enormes, impacto cinematográfico): **Fraunces** (serif moderna com pegada editorial cara)
-  - UI/corpo (limpa e profissional): **Inter Tight**
-  - Acento mono (versão "6B", tags, créditos): **JetBrains Mono**
-- **Texturas e efeitos**:
-  - Overlay de grão fino animado em todo o site
-  - Vinheta sutil nas bordas
-  - Ruído + leve gradiente radial vinho atrás do hero
-  - Linhas finas divisórias e numeração `001 — SOBRE`, `002 — JOGOS` (estilo editorial)
-- **Animações** (framer-motion + CSS):
-  - Hero com nome "SIX BULLETS" em letras gigantes entrando uma a uma, com leve parallax no scroll
-  - Marquee infinito com "SIX BULLETS • 6B • ROBLOX STUDIO •"
-  - Reveal on scroll (fade + slide) em cada seção
-  - Hover nos cards de jogos: zoom + tilt sutil + brilho vinho
-  - Hover nos devs: foto em escala de cinza → cor + nome desliza
-  - Cursor com leve glow vinho (desktop)
+Trocar as bolas CSS por um **shader WebGL** de verdade, estilo Framer / metaball fluid:
 
-## Estrutura das seções
+- Novo `LiquidBackground.tsx` usando **OGL** (~4KB, muito mais leve que three.js) — canvas fullscreen fixo, `z-0`.
+- Fragment shader com **fbm noise + domain warping** (fluido de verdade que ondula, não bolinhas circulares).
+- Cores puxadas dos tokens do site (cream / bone / wine sutil) em vez de preto puro.
+- Cursor / touch injeta um "empurrão" no campo de fluxo (uniform `uMouse` com lerp) — reage no desktop **e no mobile** (`pointermove` + `touchmove`).
+- Performance:
+  - `dpr = min(devicePixelRatio, 1.5)` no desktop, `1` no mobile.
+  - Pausa o `requestAnimationFrame` quando aba/scroll fora (IntersectionObserver + `visibilitychange`).
+  - Respeita `prefers-reduced-motion` (renderiza 1 frame estático).
+- Fallback: se WebGL falhar, cai num gradiente estático cream → paper.
+
+Isso resolve os dois problemas: "líquido de verdade" e "não funciona no mobile".
+
+## 2. Estrutura editorial (inspirada no Dembélé)
+
+Reorganiza a home em **capítulos numerados**, cada um com o mesmo ritmo visual:
 
 ```text
-[ Nav fixa minimal: 6B  •  Sobre  Jogos  Equipe  Contato ]
-
-01 HERO
-   - "SIX BULLETS" gigante (Fraunces)
-   - Sub: "Roblox Studio • Building worlds, one bullet at a time"
-   - CTA: "Conheça os jogos" + "Entrar no Discord"
-   - Marquee inferior
-
-02 SOBRE
-   - Texto curto sobre o studio (placeholder editável)
-   - Stats: anos ativos, jogos lançados, players (placeholders)
-
-03 JOGOS / PROJETOS
-   - Grid de cards (placeholders com imagens geradas)
-   - Cada card: capa, título, status (Em desenvolvimento / Lançado), botão "Jogar no Roblox"
-
-04 EQUIPE (13 devs)
-   Ordem solicitada (Zark nos primeiros):
-   1. Francez — Founder · Project Manager · UI & Game Designer
-   2. Samuca — Founder · Project Manager · Game Designer
-   3. Zark — Sub Owner · GFX Artist
-   4. Thugo — Server Manager
-   5. Marpuf — Community Manager
-   6. Yuki — Lead Dev · Modeler
-   7. Stray — Lead Dev · Modeler & Builder
-   8. Syntax — Programmer
-   9. Squidnoodles — Scripter
-   10. Thug — Animator
-   11. Whirle — Animator
-   12. Poli — SFX Artist & Music Composer
-   13. Melo — Builder
-   14. Japa — Game Designer
-   - Cards com avatar placeholder (inicial estilizada), nome, função, tag de categoria (Founders / Management / Dev / Art / Audio)
-
-05 CONTATO
-   - Bloco grande com convite pro Discord
-   - Links: Discord, X/Twitter, YouTube, Roblox Group (placeholders #)
-   - Footer com © Six Bullets + crédito mono
+00 — INTRO        Hero atual, mais respiro, título duplicado "SIX / BULLETS" em Fraunces gigante
+01 — LES RACINES  About do studio como "origem", cluster de 3-4 imagens (banner + prints HT)
+02 — LE JEU       Happy Town como capítulo principal, banner + copy editorial + stats
+                  (CCU neutro, visitas neutro, jogos lançados)
+03 — L'ÉQUIPE     Team (14 devs) com header duplicado + fotos maiores
+04 — CONTACT      CTA final "Rejoins la meute" style, links Discord/etc
 ```
 
-## Detalhes técnicos
+Cada capítulo herda os "moves" do Dembélé:
+- Número gigante do capítulo à esquerda (`Fraunces` 200px+, tracking negativo).
+- Título duplicado empilhado (segundo com `-webkit-text-stroke` outline, sem fill).
+- Cluster assimétrico de imagens (grid quebrado tipo `broken-grid`, com rotações sutis).
+- Bloco de stats no fim (número enorme + label mono minúsculo).
+- Divisor: linha fina + `— chapitre 0X` em mono.
 
-- **Rotas**: tudo em `src/routes/index.tsx` (single-page com âncoras), `__root.tsx` atualizado com fontes via `<link>` e metadados (title "Six Bullets — Roblox Studio", description, og).
-- **Componentes** em `src/components/site/`: `Nav`, `Hero`, `Marquee`, `About`, `Games`, `Team`, `TeamCard`, `Contact`, `Footer`, `GrainOverlay`.
-- **Dados** dos devs e jogos em `src/data/studio.ts` (fácil de editar depois).
-- **Animação**: instalar `framer-motion`.
-- **Fontes**: `@fontsource-variable/fraunces`, `@fontsource-variable/inter-tight`, `@fontsource/jetbrains-mono` importadas em `src/styles.css` via `@import` local (arquivos de pacote, não URL remota), e registradas em `@theme`.
-- **Tokens**: paleta vinho registrada em `@theme inline` no `src/styles.css` para virar `bg-wine`, `text-wine-glow`, etc.
-- **Imagens**: 3 placeholders de capas de jogos gerados com `imagegen` (estilo cinematográfico dark + vinho); avatares dos devs usam monograma estilizado (sem fotos reais para não inventar rostos).
+## 3. Refino visual
 
-## Fora do escopo desta versão
+- **Grão animado** mais presente (usar o padrão do próprio Dembélé: overlay `.webp` de grain tileado, `mix-blend: multiply`, opacity ~0.12).
+- Tipografia: manter Instrument Serif / Fraunces + Space Grotesk, aumentar escalas display (clamp até ~18vw).
+- Manter paleta atual (cream/paper/ink/wine) — o líquido dá a cor viva sem precisar de paleta nova.
+- Cursor custom mantém, mas some naturalmente no mobile.
+- Micro-animações: reveal por linha nos títulos (mask + translateY), stats com counter animado ao entrar no viewport.
 
-- Backend / login / formulário de contato funcional (só links)
-- CMS pra editar conteúdo pela UI
-- Páginas separadas por jogo (pode virar próximo passo)
+## 4. Mobile
+
+- Liquid shader ativo no mobile (dpr=1, resolução reduzida) — testado com `touchmove`.
+- Layouts editoriais viram coluna única com o número do capítulo empilhado em cima do título.
+- Cursor custom desligado (já é hoje), grão mantém.
+
+## 5. Detalhes técnicos
+
+- Adicionar dependência: `ogl` (~15KB gz, sem React overhead).
+- Novo shader em `src/components/site/liquid/fluid.frag.glsl` + hook `useFluidBackground.ts`.
+- Refatorar `LiquidBackground.tsx` para montar o canvas OGL, tratar resize, mouse/touch, visibilidade.
+- Novo componente `Chapter.tsx` (número + título duplo + slot) reutilizado por About, HappyTown, Team, Contact.
+- Novo `Stats.tsx` (grid de números grandes + labels mono) usado no HappyTown e Team.
+- CSS: novo utility `.title-outline` (text-stroke), `.chapter-num`, `.broken-grid`; remover `.liquid-blob*` antigo.
+- Nenhuma mudança em rotas, dados (`studio.ts`), auth ou backend — puramente frontend/apresentação.
+
+## Fora de escopo
+
+- Não mexer em conteúdo textual/estrutura de dados dos devs (só apresentação).
+- Sem novas páginas/rotas.
+- Sem backend/segurança/CMS.
