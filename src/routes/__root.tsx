@@ -9,8 +9,11 @@ import {
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
 
-import appCss from "../styles.css?url";
-import { reportLovableError } from "../lib/lovable-error-reporting";
+import appCss from "@/styles.css?url";
+import { reportLovableError } from "@/lib/lovable-error-reporting";
+import { Cursor } from "@/components/layout/Cursor";
+import { LiquidBackground } from "@/components/layout/LiquidBackground";
+import { ThemeProvider, THEME_INIT_SCRIPT } from "@/hooks/use-theme";
 
 function NotFoundComponent() {
   return (
@@ -77,11 +80,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { title: "Six Bullets — Roblox Horror Studio" },
+      {
+        name: "description",
+        content: "Six Bullets (6B) — a Roblox studio building Happy Town, a psychological horror project.",
+      },
+      { name: "author", content: "Six Bullets Studio" },
+      { name: "theme-color", content: "#f8f7f5" },
+      { property: "og:title", content: "Six Bullets — Roblox Horror Studio" },
+      {
+        property: "og:description",
+        content: "Small crew, sharp aim. Now cooking Happy Town.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
@@ -106,6 +116,7 @@ function RootShell({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <head>
+        <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
         <HeadContent />
       </head>
       <body>
@@ -121,8 +132,13 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <Outlet />
+      <ThemeProvider>
+        {/* Liquid background + custom cursor live at the root so every route gets them. */}
+        <LiquidBackground />
+        <Cursor />
+        {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+        <Outlet />
+      </ThemeProvider>
     </QueryClientProvider>
   );
 }
