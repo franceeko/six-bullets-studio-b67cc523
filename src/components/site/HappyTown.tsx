@@ -5,7 +5,7 @@ export function HappyTown() {
   return (
     <section
       id="happy-town"
-      className="relative py-28 md:py-40 overflow-hidden bg-paper"
+      className="relative py-28 md:py-40 overflow-hidden bg-paper/70"
     >
       <div className="max-w-[1400px] mx-auto px-6 lg:px-12">
         <motion.div
