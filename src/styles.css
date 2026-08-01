@@ -436,5 +436,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .liquid-blob { animation: none !important; transition: none !important; }
+  .liquid-grain { animation: none !important; }
 }
+
