@@ -30,9 +30,9 @@ export function HappyTown() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
-          className="relative overflow-hidden border-2 border-ink bg-ink gpu"
+          className="edge-ticks relative overflow-hidden border-2 border-ink bg-ink gpu rounded-xl"
         >
-          <div className="relative aspect-[16/9] md:aspect-[21/9] overflow-hidden">
+          <div className="relative aspect-[16/9] md:aspect-[21/9] overflow-hidden rounded-[10px]">
             <img
               src={happyTown.url}
               alt="Happy Town key art"
