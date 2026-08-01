@@ -73,10 +73,9 @@ void main() {
   // ink-on-cream palette
   vec3 cream = vec3(0.976, 0.972, 0.964);
   vec3 paper = vec3(0.929, 0.921, 0.909);
-  vec3 bone  = vec3(0.855, 0.845, 0.833);
+  vec3 bone  = vec3(0.847, 0.839, 0.827);
   vec3 ink   = vec3(0.internal);
-  gl_FragColor = vec4(0.0);
-}
+
 `;
 
 export function LiquidBackground() {
