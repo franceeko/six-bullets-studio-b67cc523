@@ -133,9 +133,9 @@
 @utility section-bridge {
   background: linear-gradient(
     to bottom,
-    var(--paper) 0%,
-    var(--cream) 38%,
-    var(--paper) 100%
+    oklch(0.955 0 0 / 0.85) 0%,
+    oklch(0.985 0 0 / 0.55) 38%,
+    oklch(0.955 0 0 / 0.85) 100%
   );
 }
 
