@@ -1,70 +1,53 @@
+# Reestruturação, tema claro/escuro e refino de UI
 
-# Six Bullets 2.0 — Editorial + Liquid
+Faxina geral no projeto + camada visual nova inspirada no v0-compute (bordas definidas, cards com contorno, detalhes finos), tema light/dark com paletas próprias e fundo líquido adaptativo por dispositivo.
 
-Mistura o layout atual (nav, hero, Happy Town, team, contato) com a estrutura **editorial cinematográfica** do site do Dembélé: capítulos numerados, títulos serifados gigantes duplicados, clusters de imagens espalhadas, blocos de stats grandes, muito respiro cream + grão.
+## 1. Imagens e organização
 
-## 1. Novo background líquido (o ponto principal)
+Duas coisas do pedido precisam de ajuste porque brigam com a plataforma:
 
-Trocar as bolas CSS por um **shader WebGL** de verdade, estilo Framer / metaball fluid:
+- **`.asset.json`**: são ponteiros para imagens reais já hospedadas no CDN da Lovable (as imagens existem e carregam no localhost). Converter para binários dentro do repo deixa o repositório pesado (o gif do Marpuf sozinho tem 5 MB) e é justamente o oposto da otimização pedida. Mantenho os ponteiros, mas centralizo tudo num único módulo `src/assets/index.ts` para não haver import solto espalhado.
+- **`index.html`**: este stack é TanStack Start com SSR — o HTML é gerado por `src/routes/__root.tsx`. Adicionar um `index.html` quebra o build. Em vez disso, reviso o `__root` (lang, meta, fonts, favicon) para cumprir o mesmo papel.
 
-- Novo `LiquidBackground.tsx` usando **OGL** (~4KB, muito mais leve que three.js) — canvas fullscreen fixo, `z-0`.
-- Fragment shader com **fbm noise + domain warping** (fluido de verdade que ondula, não bolinhas circulares).
-- Cores puxadas dos tokens do site (cream / bone / wine sutil) em vez de preto puro.
-- Cursor / touch injeta um "empurrão" no campo de fluxo (uniform `uMouse` com lerp) — reage no desktop **e no mobile** (`pointermove` + `touchmove`).
-- Performance:
-  - `dpr = min(devicePixelRatio, 1.5)` no desktop, `1` no mobile.
-  - Pausa o `requestAnimationFrame` quando aba/scroll fora (IntersectionObserver + `visibilitychange`).
-  - Respeita `prefers-reduced-motion` (renderiza 1 frame estático).
-- Fallback: se WebGL falhar, cai num gradiente estático cream → paper.
+Limpeza que será feita:
 
-Isso resolve os dois problemas: "líquido de verdade" e "não funciona no mobile".
+- Remover lixo: `src/assets/game-1.jpg`, `game-2.jpg`, `game-3.jpg` (não referenciados em lugar nenhum).
+- Estrutura final em `src`: `components/site` (seções), `components/ui` (shadcn), `components/layout` (Nav/Footer/Cursor/Grain), `hooks`, `lib`, `data`, `assets`, `routes`.
+- Todos os imports passam a usar `@/*`; nada de caminho relativo confuso.
 
-## 2. Estrutura editorial (inspirada no Dembélé)
+## 2. Tema claro/escuro na topbar
 
-Reorganiza a home em **capítulos numerados**, cada um com o mesmo ritmo visual:
+- Botão de toggle na Nav (ícone sol/lua, com animação de troca).
+- **Paleta clara "Cream"**: base creme/paper, tinta quase-preta, acento vinho — o visual atual, refinado.
+- **Paleta escura "Ink"**: base grafite profundo, tipografia bone, acento âmbar quente — não é só inverter, é uma paleta desenhada pra ter o mesmo contraste editorial.
+- Persistência em `localStorage` + respeito a `prefers-color-scheme`, com script inline anti-flash no `__root`.
+- O shader do fundo líquido lê as cores do tema e faz transição suave entre as duas paletas.
 
-```text
-00 — INTRO        Hero atual, mais respiro, título duplicado "SIX / BULLETS" em Fraunces gigante
-01 — LES RACINES  About do studio como "origem", cluster de 3-4 imagens (banner + prints HT)
-02 — LE JEU       Happy Town como capítulo principal, banner + copy editorial + stats
-                  (CCU neutro, visitas neutro, jogos lançados)
-03 — L'ÉQUIPE     Team (14 devs) com header duplicado + fotos maiores
-04 — CONTACT      CTA final "Rejoins la meute" style, links Discord/etc
-```
+## 3. Fundo líquido em todas as páginas + performance por dispositivo
 
-Cada capítulo herda os "moves" do Dembélé:
-- Número gigante do capítulo à esquerda (`Fraunces` 200px+, tracking negativo).
-- Título duplicado empilhado (segundo com `-webkit-text-stroke` outline, sem fill).
-- Cluster assimétrico de imagens (grid quebrado tipo `broken-grid`, com rotações sutis).
-- Bloco de stats no fim (número enorme + label mono minúsculo).
-- Divisor: linha fina + `— chapitre 0X` em mono.
+- Fundo movido para o `__root`, logo passa a existir em qualquer rota futura.
+- **Detecção de capacidade** (`hardwareConcurrency`, `deviceMemory`, tipo de ponteiro, `prefers-reduced-motion`) classifica o aparelho em três níveis:
+  - `high` (PC / iPhone recente): dpr até 1.5, 60fps, ruído com 5 oitavas.
+  - `medium` (celular mediano): dpr 1, 30fps, 3 oitavas.
+  - `low` (J2/J3, pouca RAM, 2 núcleos): shader desligado, gradiente CSS estático com leve animação — zero custo de GPU.
+- **Toque líquido**: `pointerdown/move` injeta um "ripple" no campo de fluxo (empurrão decaindo no tempo), funcionando igual em mouse e dedo.
+- Render pausa fora de foco e fora do viewport.
 
-## 3. Refino visual
+## 4. Refino visual (estilo v0-compute + nosso editorial)
 
-- **Grão animado** mais presente (usar o padrão do próprio Dembélé: overlay `.webp` de grain tileado, `mix-blend: multiply`, opacity ~0.12).
-- Tipografia: manter Instrument Serif / Fraunces + Space Grotesk, aumentar escalas display (clamp até ~18vw).
-- Manter paleta atual (cream/paper/ink/wine) — o líquido dá a cor viva sem precisar de paleta nova.
-- Cursor custom mantém, mas some naturalmente no mobile.
-- Micro-animações: reveal por linha nos títulos (mask + translateY), stats com counter animado ao entrar no viewport.
+- **Bordas em todo canto**: cards, banner do Happy Town, avatares da equipe e blocos de contato ganham contorno fino consistente, cantos com marcadores em L, e "hairlines" divisórias entre seções.
+- Banner do Happy Town: moldura dupla, label mono no canto, hover com leve zoom contido pela borda.
+- Cards de membro: contorno + faixa de função no rodapé do card, hover que acende a borda na cor do membro.
+- Micro-detalhes: números de capítulo, badges mono uppercase, linhas guia verticais sutis no container.
 
-## 4. Mobile
+## 5. Performance e padronização
 
-- Liquid shader ativo no mobile (dpr=1, resolução reduzida) — testado com `touchmove`.
-- Layouts editoriais viram coluna única com o número do capítulo empilhado em cima do título.
-- Cursor custom desligado (já é hoje), grão mantém.
-
-## 5. Detalhes técnicos
-
-- Adicionar dependência: `ogl` (~15KB gz, sem React overhead).
-- Novo shader em `src/components/site/liquid/fluid.frag.glsl` + hook `useFluidBackground.ts`.
-- Refatorar `LiquidBackground.tsx` para montar o canvas OGL, tratar resize, mouse/touch, visibilidade.
-- Novo componente `Chapter.tsx` (número + título duplo + slot) reutilizado por About, HappyTown, Team, Contact.
-- Novo `Stats.tsx` (grid de números grandes + labels mono) usado no HappyTown e Team.
-- CSS: novo utility `.title-outline` (text-stroke), `.chapter-num`, `.broken-grid`; remover `.liquid-blob*` antigo.
-- Nenhuma mudança em rotas, dados (`studio.ts`), auth ou backend — puramente frontend/apresentação.
+- Lazy loading das seções pesadas (Team, HappyTown, Contact) via `React.lazy` + `Suspense` com placeholder de mesma altura (sem layout shift).
+- Todas as `<img>` com `loading="lazy"`, `decoding="async"` e dimensões definidas; hero fica `eager` com preload.
+- Passada de ESLint/Prettier no projeto todo, remoção de imports redundantes, tipagem explícita (sem `any`) nos hooks e no módulo do shader.
+- `vite.config.ts` fica como está — é o preset da plataforma e adicionar plugins manualmente duplica o build.
 
 ## Fora de escopo
 
-- Não mexer em conteúdo textual/estrutura de dados dos devs (só apresentação).
-- Sem novas páginas/rotas.
-- Sem backend/segurança/CMS.
+- Sem novas rotas/páginas, backend, login ou CMS.
+- Sem mudança nos dados dos devs (só apresentação).
