@@ -74,7 +74,26 @@ void main() {
   vec3 cream = vec3(0.976, 0.972, 0.964);
   vec3 paper = vec3(0.929, 0.921, 0.909);
   vec3 bone  = vec3(0.847, 0.839, 0.827);
-  vec3 ink   = vec3(0.internal);
+  vec3 ink   = vec3(0.090, 0.090, 0.090);
+
+  float band = smoothstep(-0.35, 0.55, f);
+  vec3 col = mix(cream, paper, smoothstep(0.15, 0.85, band));
+  col = mix(col, bone, smoothstep(0.62, 1.0, band) * 0.85);
+
+  // thin ink veins where the marbling folds
+  float vein = smoothstep(0.015, 0.0, abs(f - 0.16));
+  col = mix(col, ink, vein * 0.10);
+
+  // soft ink pooling around the pointer
+  col = mix(col, ink, pull * 0.05);
+
+  // vignette + faint top-light
+  float vig = smoothstep(1.15, 0.25, length(uv - 0.5) * 1.4);
+  col *= mix(0.94, 1.0, vig);
+
+  gl_FragColor = vec4(col, 1.0);
+}
+
 
 `;
 
