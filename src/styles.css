@@ -190,15 +190,7 @@
   }
 }
 
-/* Seamless bridge between sections — soft vertical gradient wash */
-@utility section-bridge {
-  background: linear-gradient(
-    to bottom,
-    color-mix(in oklab, var(--paper) 85%, transparent) 0%,
-    color-mix(in oklab, var(--cream) 55%, transparent) 38%,
-    color-mix(in oklab, var(--paper) 85%, transparent) 100%
-  );
-}
+/* section-bridge is defined near the bottom of this file */
 
 
 /* GPU-accelerated layer — force compositor promotion for smooth animation on low-end devices */
