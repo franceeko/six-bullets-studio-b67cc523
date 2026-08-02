@@ -1,10 +1,10 @@
 import { useEffect, useRef } from "react";
 
-import { detectDeviceTier, type DeviceTier } from "@/hooks/use-device-tier";
+import { detectPerfTier, PERF_SETTINGS, downgrade, type PerfTier } from "@/hooks/usePerfProfile";
 
 /**
- * Liquid background — WebGL fragment shader (fbm + domain warping) with
- * pointer/touch ripples, light+dark palettes and a per-device render budget.
+ * Liquid background — WebGL fragment shader (fbm + domain warping) with strong
+ * pointer/touch reactivity, light+dark palettes and a six-step render budget.
  * Falls back to the CSS gradient painted by `.liquid-bg` when WebGL is
  * unavailable or the device is too weak to afford a shader.
  */
@@ -14,15 +14,16 @@ attribute vec2 p;
 void main() { gl_Position = vec4(p, 0.0, 1.0); }
 `;
 
-const MAX_RIPPLES = 4;
+const MAX_RIPPLES = 5;
 
-const frag = (octaves: number) => `
+const frag = (octaves: number, rich: boolean) => `
 precision mediump float;
 
 uniform vec2  uRes;
 uniform float uTime;
 uniform vec2  uMouse;
 uniform float uPress;
+uniform float uVel;
 uniform float uDark;
 uniform vec3  uRipples[${MAX_RIPPLES}];
 
@@ -59,13 +60,16 @@ void main() {
   float m0 = min(uRes.x, uRes.y);
   vec2 st = (gl_FragCoord.xy - 0.5 * uRes.xy) / m0;
 
-  float t = uTime * 0.06;
+  float t = uTime * 0.075;
 
-  // pointer swirl
+  // pointer field — wide, strong pull plus a rotating swirl
   vec2 m = (uMouse - 0.5 * uRes.xy) / m0;
   vec2 d = st - m;
-  float pull = uPress * exp(-length(d) * 2.4);
-  vec2 swirl = vec2(-d.y, d.x) * pull * 1.6;
+  float dist = length(d);
+  float falloff = exp(-dist * 1.5);
+  float pull = (0.55 + uPress * 0.9 + uVel * 1.4) * falloff;
+  vec2 swirl = vec2(-d.y, d.x) * pull * 3.2;
+  swirl += normalize(d + 0.0001) * pull * 0.9 * sin(uTime * 0.9 - dist * 6.0);
 
   // touch ripples — each is (x, y, strength) in the same normalised space
   float ripple = 0.0;
@@ -74,44 +78,52 @@ void main() {
     if (r.z > 0.001) {
       vec2 rd = st - r.xy;
       float rl = length(rd);
-      float wave = sin(rl * 26.0 - (1.0 - r.z) * 12.0) * exp(-rl * 5.0);
+      float wave = sin(rl * 22.0 - (1.0 - r.z) * 16.0) * exp(-rl * 3.4);
       ripple += wave * r.z;
-      swirl += normalize(rd + 0.0001) * wave * r.z * 0.35;
+      swirl += normalize(rd + 0.0001) * wave * r.z * 1.1;
     }
   }
 
-  vec2 q = vec2(fbm(st * 1.6 + vec2(0.0, t)),
-                fbm(st * 1.6 + vec2(5.2, 1.3) - t * 0.8));
+  vec2 q = vec2(fbm(st * 1.5 + vec2(0.0, t) + swirl * 0.35),
+                fbm(st * 1.5 + vec2(5.2, 1.3) - t * 0.8 + swirl * 0.35));
 
-  vec2 r2 = vec2(fbm(st * 1.9 + 3.5 * q + vec2(1.7, 9.2) + t * 1.2 + swirl),
-                 fbm(st * 1.9 + 3.5 * q + vec2(8.3, 2.8) - t * 0.9 + swirl));
+  vec2 r2 = vec2(fbm(st * 1.85 + 3.8 * q + vec2(1.7, 9.2) + t * 1.2 + swirl),
+                 fbm(st * 1.85 + 3.8 * q + vec2(8.3, 2.8) - t * 0.9 + swirl));
 
-  float f = fbm(st * 1.4 + 3.2 * r2 + pull * 0.8) + ripple * 0.18;
+  float f = fbm(st * 1.35 + 3.4 * r2 + pull * 1.2) + ripple * 0.3;
 
   // light palette — cream / paper / bone / ink
   vec3 lBase = vec3(0.976, 0.972, 0.964);
-  vec3 lMid  = vec3(0.929, 0.921, 0.909);
-  vec3 lEdge = vec3(0.847, 0.839, 0.827);
+  vec3 lMid  = vec3(0.925, 0.918, 0.906);
+  vec3 lEdge = vec3(0.836, 0.828, 0.816);
   vec3 lVein = vec3(0.090, 0.090, 0.090);
 
   // dark palette — graphite / slate with a warm amber vein
-  vec3 dBase = vec3(0.070, 0.068, 0.074);
-  vec3 dMid  = vec3(0.113, 0.110, 0.121);
-  vec3 dEdge = vec3(0.168, 0.163, 0.180);
-  vec3 dVein = vec3(0.850, 0.640, 0.330);
+  vec3 dBase = vec3(0.068, 0.066, 0.072);
+  vec3 dMid  = vec3(0.115, 0.112, 0.123);
+  vec3 dEdge = vec3(0.172, 0.166, 0.184);
+  vec3 dVein = vec3(0.870, 0.650, 0.330);
 
   vec3 base = mix(lBase, dBase, uDark);
   vec3 mid  = mix(lMid,  dMid,  uDark);
   vec3 edge = mix(lEdge, dEdge, uDark);
   vec3 vein = mix(lVein, dVein, uDark);
 
-  float band = smoothstep(-0.35, 0.55, f);
-  vec3 col = mix(base, mid, smoothstep(0.15, 0.85, band));
-  col = mix(col, edge, smoothstep(0.62, 1.0, band) * 0.85);
+  float band = smoothstep(-0.4, 0.6, f);
+  vec3 col = mix(base, mid, smoothstep(0.12, 0.88, band));
+  col = mix(col, edge, smoothstep(0.58, 1.0, band) * 0.9);
 
-  float veinMask = smoothstep(0.015, 0.0, abs(f - 0.16));
-  col = mix(col, vein, veinMask * mix(0.10, 0.22, uDark));
-  col = mix(col, vein, pull * mix(0.05, 0.10, uDark));
+  ${
+    rich
+      ? `
+  float veinMask = smoothstep(0.02, 0.0, abs(f - 0.16));
+  col = mix(col, vein, veinMask * mix(0.14, 0.28, uDark));
+  float veinMask2 = smoothstep(0.012, 0.0, abs(f + 0.10));
+  col = mix(col, vein, veinMask2 * mix(0.07, 0.16, uDark));
+  `
+      : ``
+  }
+  col = mix(col, vein, clamp(pull, 0.0, 1.0) * mix(0.07, 0.14, uDark));
 
   float vig = smoothstep(1.15, 0.25, length(uv - 0.5) * 1.4);
   col *= mix(mix(0.94, 1.0, vig), mix(0.80, 1.06, vig), uDark);
@@ -119,18 +131,6 @@ void main() {
   gl_FragColor = vec4(col, 1.0);
 }
 `;
-
-type TierSettings = {
-  octaves: number;
-  maxDpr: number;
-  scale: number;
-  fps: number;
-};
-
-const TIERS: Record<Exclude<DeviceTier, "low">, TierSettings> = {
-  high: { octaves: 5, maxDpr: 1.5, scale: 0.75, fps: 60 },
-  medium: { octaves: 3, maxDpr: 1, scale: 0.5, fps: 30 },
-};
 
 function compile(gl: WebGLRenderingContext, type: number, src: string): WebGLShader | null {
   const shader = gl.createShader(type);
@@ -151,23 +151,23 @@ export function LiquidBackground() {
     const canvas = ref.current;
     if (!canvas) return;
 
-    const tier = detectDeviceTier();
-    if (tier === "low") return; // CSS gradient only — zero GPU cost
+    let tier: PerfTier = detectPerfTier();
+    if (tier === "static") return; // CSS gradient only — zero GPU cost
 
-    const settings = TIERS[tier];
+    let settings = PERF_SETTINGS[tier];
 
     const gl =
       (canvas.getContext("webgl", {
         antialias: false,
         alpha: true,
         depth: false,
-        powerPreference: tier === "high" ? "default" : "low-power",
+        powerPreference: tier === "ultra" || tier === "high" ? "high-performance" : "low-power",
       }) as WebGLRenderingContext | null) ??
       (canvas.getContext("experimental-webgl") as WebGLRenderingContext | null);
     if (!gl) return;
 
     const vs = compile(gl, gl.VERTEX_SHADER, VERT);
-    const fs = compile(gl, gl.FRAGMENT_SHADER, frag(settings.octaves));
+    const fs = compile(gl, gl.FRAGMENT_SHADER, frag(settings.octaves, settings.rich));
     if (!vs || !fs) return;
 
     const prog = gl.createProgram();
@@ -189,11 +189,11 @@ export function LiquidBackground() {
     const uTime = gl.getUniformLocation(prog, "uTime");
     const uMouse = gl.getUniformLocation(prog, "uMouse");
     const uPress = gl.getUniformLocation(prog, "uPress");
+    const uVel = gl.getUniformLocation(prog, "uVel");
     const uDark = gl.getUniformLocation(prog, "uDark");
     const uRipples = gl.getUniformLocation(prog, "uRipples");
 
-    const dpr = () =>
-      Math.min(window.devicePixelRatio || 1, settings.maxDpr) * settings.scale;
+    const dpr = () => Math.min(window.devicePixelRatio || 1, settings.maxDpr) * settings.scale;
 
     let w = 1;
     let h = 1;
@@ -222,11 +222,14 @@ export function LiquidBackground() {
     let my = ty;
     let targetPress = 0;
     let press = 0;
+    let vel = 0;
+    let lastX = tx;
+    let lastY = ty;
 
     type Ripple = { x: number; y: number; born: number };
     const ripples: Ripple[] = [];
     const rippleData = new Float32Array(MAX_RIPPLES * 3);
-    const RIPPLE_LIFE = 1600;
+    const RIPPLE_LIFE = 1900;
 
     const toCanvas = (cx: number, cy: number) => {
       const s = dpr();
@@ -293,8 +296,13 @@ export function LiquidBackground() {
     let raf = 0;
     let running = true;
     const start = performance.now();
-    const frameBudget = 1000 / settings.fps;
+    let frameBudget = 1000 / settings.fps;
     let last = 0;
+
+    // runtime watchdog — step the tier down if we keep missing the budget
+    let frames = 0;
+    let windowStart = performance.now();
+    let strikes = 0;
 
     const render = (now: number) => {
       if (!running) return;
@@ -303,9 +311,18 @@ export function LiquidBackground() {
       last = now;
 
       const time = (now - start) / 1000;
-      mx += (tx - mx) * 0.06;
-      my += (ty - my) * 0.06;
-      press += (targetPress - press) * 0.05;
+
+      // inertia — the fluid keeps chasing the pointer after it stops
+      mx += (tx - mx) * 0.1;
+      my += (ty - my) * 0.1;
+      const m0 = Math.min(w, h);
+      const dx = (mx - lastX) / m0;
+      const dy = (my - lastY) / m0;
+      lastX = mx;
+      lastY = my;
+      const speed = Math.min(1, Math.hypot(dx, dy) * 14);
+      vel += (speed - vel) * 0.12;
+      press += (targetPress - press) * 0.08;
       dark += (targetDark - dark) * 0.08;
 
       rippleData.fill(0);
@@ -325,9 +342,33 @@ export function LiquidBackground() {
       gl.uniform1f(uTime, time);
       gl.uniform2f(uMouse, mx, my);
       gl.uniform1f(uPress, press);
+      gl.uniform1f(uVel, vel);
       gl.uniform1f(uDark, dark);
       gl.uniform3fv(uRipples, rippleData);
       gl.drawArrays(gl.TRIANGLES, 0, 3);
+
+      // watchdog
+      frames++;
+      if (now - windowStart > 2500) {
+        const fps = (frames * 1000) / (now - windowStart);
+        frames = 0;
+        windowStart = now;
+        if (fps < settings.fps * 0.6) {
+          strikes++;
+          if (strikes >= 2) {
+            const next = downgrade(tier);
+            if (next !== tier) {
+              tier = next;
+              settings = PERF_SETTINGS[tier];
+              frameBudget = settings.fps > 0 ? 1000 / settings.fps : 1000;
+              resize();
+            }
+            strikes = 0;
+          }
+        } else {
+          strikes = 0;
+        }
+      }
     };
     raf = requestAnimationFrame(render);
 
@@ -338,6 +379,8 @@ export function LiquidBackground() {
       } else if (!running) {
         running = true;
         last = 0;
+        windowStart = performance.now();
+        frames = 0;
         raf = requestAnimationFrame(render);
       }
     };
