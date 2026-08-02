@@ -496,7 +496,21 @@
     linear-gradient(135deg, var(--cream), var(--paper));
 }
 
+/* Soft cross-fade between sections so background shifts are never abrupt */
+@utility section-bridge {
+  position: relative;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    color-mix(in oklab, var(--paper) 62%, transparent) 14%,
+    color-mix(in oklab, var(--paper) 62%, transparent) 86%,
+    transparent 100%
+  );
+  transition: background 600ms ease;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .liquid-grain { animation: none !important; }
 }
+
 
