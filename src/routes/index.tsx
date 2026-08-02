@@ -6,6 +6,7 @@ import { Footer } from "@/components/layout/Footer";
 import { Hero } from "@/components/site/Hero";
 import { Marquee } from "@/components/site/Marquee";
 import { About } from "@/components/site/About";
+import { SectionStage } from "@/components/perf/SectionStage";
 
 const HappyTown = lazy(() =>
   import("@/components/site/HappyTown").then((m) => ({ default: m.HappyTown })),
