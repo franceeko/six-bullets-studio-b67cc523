@@ -28,7 +28,7 @@ export function Hero() {
 
         {/* Headline — Bepp style: huge mixed weight with inline chips */}
         <motion.h1
-          className="font-display text-center leading-[0.88] tracking-[-0.03em] text-ink text-[clamp(3rem,10vw,10.5rem)]"
+          className="font-display text-center leading-[0.82] tracking-[-0.045em] text-ink text-[clamp(3.75rem,13.5vw,15rem)]"
         >
           {/* Line 1 */}
           <span className="block overflow-hidden">

@@ -190,15 +190,7 @@
   }
 }
 
-/* Seamless bridge between sections — soft vertical gradient wash */
-@utility section-bridge {
-  background: linear-gradient(
-    to bottom,
-    color-mix(in oklab, var(--paper) 85%, transparent) 0%,
-    color-mix(in oklab, var(--cream) 55%, transparent) 38%,
-    color-mix(in oklab, var(--paper) 85%, transparent) 100%
-  );
-}
+/* section-bridge is defined near the bottom of this file */
 
 
 /* GPU-accelerated layer — force compositor promotion for smooth animation on low-end devices */
@@ -496,7 +488,21 @@
     linear-gradient(135deg, var(--cream), var(--paper));
 }
 
+/* Soft cross-fade between sections so background shifts are never abrupt */
+@utility section-bridge {
+  position: relative;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    color-mix(in oklab, var(--paper) 62%, transparent) 14%,
+    color-mix(in oklab, var(--paper) 62%, transparent) 86%,
+    transparent 100%
+  );
+  transition: background 600ms ease;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .liquid-grain { animation: none !important; }
 }
+
 

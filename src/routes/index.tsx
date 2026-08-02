@@ -6,6 +6,7 @@ import { Footer } from "@/components/layout/Footer";
 import { Hero } from "@/components/site/Hero";
 import { Marquee } from "@/components/site/Marquee";
 import { About } from "@/components/site/About";
+import { SectionStage } from "@/components/perf/SectionStage";
 
 const HappyTown = lazy(() =>
   import("@/components/site/HappyTown").then((m) => ({ default: m.HappyTown })),
@@ -51,15 +52,21 @@ function Index() {
         <Hero />
         <Marquee />
         <About />
-        <Deferred height={760}>
-          <HappyTown />
-        </Deferred>
-        <Deferred height={1200}>
-          <Team />
-        </Deferred>
-        <Deferred height={640}>
-          <Contact />
-        </Deferred>
+        <SectionStage minHeight={860}>
+          <Deferred height={860}>
+            <HappyTown />
+          </Deferred>
+        </SectionStage>
+        <SectionStage minHeight={1600}>
+          <Deferred height={1600}>
+            <Team />
+          </Deferred>
+        </SectionStage>
+        <SectionStage minHeight={640}>
+          <Deferred height={640}>
+            <Contact />
+          </Deferred>
+        </SectionStage>
       </main>
       <Footer />
     </div>

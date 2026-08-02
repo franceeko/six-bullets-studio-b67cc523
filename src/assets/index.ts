@@ -4,14 +4,14 @@
  * Import from "@/assets" — never reach into the pointer files directly.
  */
 import drigo from "@/assets/devs/drigo.png.asset.json";
+import eater from "@/assets/devs/eater.png.asset.json";
 import francez from "@/assets/devs/francez.png.asset.json";
-import japa from "@/assets/devs/japa.png.asset.json";
-import marpuf from "@/assets/devs/marpuf.gif.asset.json";
+import marpuf from "@/assets/devs/marpuf.mp4.asset.json";
 import melo from "@/assets/devs/melo.png.asset.json";
-import poli from "@/assets/devs/poli.gif.asset.json";
+import poli from "@/assets/devs/poli.png.asset.json";
 import samuca from "@/assets/devs/samuca.png.asset.json";
 import stray from "@/assets/devs/stray.png.asset.json";
-import syntax from "@/assets/devs/syntax.png.asset.json";
+import syntax from "@/assets/devs/syntax.gif.asset.json";
 import thug from "@/assets/devs/thug.png.asset.json";
 import thugo from "@/assets/devs/thugo.png.asset.json";
 import whirle from "@/assets/devs/whirle.png.asset.json";
@@ -29,8 +29,8 @@ export const images = {
 
 export const devAvatars = {
   drigo: url(drigo),
+  eater: url(eater),
   francez: url(francez),
-  japa: url(japa),
   marpuf: url(marpuf),
   melo: url(melo),
   poli: url(poli),
