@@ -38,12 +38,19 @@ export function SectionStage({
       return;
     }
 
+    // On touch devices we never unmount: fast scrolling + remount is what
+    // leaves phones staring at a blank screen. Desktop keeps the unloading.
+    const touch =
+      typeof window !== "undefined" && window.matchMedia("(pointer: coarse)").matches;
+    const keep = once || touch;
+
     const io = new IntersectionObserver(
       ([entry]) => {
         if (!entry) return;
         if (entry.isIntersecting) {
           setActive(true);
-        } else if (!once) {
+          if (keep) io.disconnect();
+        } else if (!keep) {
           // Remember the rendered height so the scroll position never jumps.
           const h = el.getBoundingClientRect().height;
           if (h > 0) setReserved(h);
@@ -55,6 +62,7 @@ export function SectionStage({
     io.observe(el);
     return () => io.disconnect();
   }, [margin, once]);
+
 
   return (
     <div
