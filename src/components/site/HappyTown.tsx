@@ -33,6 +33,12 @@ export function HappyTown() {
           </span>
         </div>
 
+        <h2 className="mb-8 max-w-3xl font-display text-[clamp(2rem,5vw,4rem)] uppercase leading-[0.95] tracking-[-0.03em] text-ink md:mb-10">
+          Happy Town
+        </h2>
+
+
+
         {/* Key art */}
         <motion.div
           ref={ref}
