@@ -1,99 +1,93 @@
-import { motion } from "framer-motion";
+import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
+import { ArrowUpRight } from "lucide-react";
+import { useRef } from "react";
+
 import happyTown from "@/assets/happy-town-banner.png.asset.json";
 
+const meta = [
+  { k: "Status", v: "In production" },
+  { k: "Genre", v: "Psychological horror" },
+  { k: "Platform", v: "Roblox" },
+  { k: "Studio", v: "Six Bullets" },
+];
+
 export function HappyTown() {
+  const ref = useRef<HTMLDivElement>(null);
+  const reduced = useReducedMotion();
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "end start"],
+  });
+  const y = useTransform(scrollYProgress, [0, 1], reduced ? ["0%", "0%"] : ["-6%", "6%"]);
+
   return (
-    <section
-      id="happy-town"
-      className="section-bridge relative py-28 md:py-40 overflow-hidden"
-    >
-      <div className="max-w-[1500px] mx-auto px-6 lg:px-12">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: false }}
-          transition={{ duration: 0.8 }}
-          className="mb-10 md:mb-16 flex flex-wrap items-end justify-between gap-6"
-        >
-          <div>
-            <div className="font-mono text-[10px] md:text-xs uppercase tracking-[0.32em] text-ink/60 mb-3 flex items-center gap-2">
-              <span className="inline-block size-1.5 rounded-full bg-wine animate-pulse" />
-              002 — Current project
-            </div>
-            <h2 className="font-display italic font-normal text-6xl md:text-8xl tracking-[-0.03em] text-ink leading-[0.9]">
-              Happy Town
-            </h2>
+    <section id="happy-town" className="section-bridge relative overflow-hidden py-24 md:py-36">
+      <div className="mx-auto max-w-[1500px] px-6 lg:px-12">
+        <div className="mb-8 flex flex-wrap items-end justify-between gap-4 md:mb-12">
+          <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.3em] text-ink/55 md:text-xs">
+            <span className="inline-block size-1.5 rounded-full bg-wine" />
+            002 — Current project
           </div>
-          <span className="font-mono text-[10px] uppercase tracking-[0.28em] text-ink/45">
-            Psychological horror · Roblox
+          <span className="font-mono text-[10px] uppercase tracking-[0.28em] text-ink/40">
+            WIP
           </span>
-        </motion.div>
+        </div>
 
-        {/* Cinema frame */}
+        <h2 className="mb-8 max-w-3xl font-display text-[clamp(2rem,5vw,4rem)] uppercase leading-[0.95] tracking-[-0.03em] text-ink md:mb-10">
+          Happy Town
+        </h2>
+
+
+
+        {/* Key art */}
         <motion.div
-          initial={{ opacity: 0, y: 50, scale: 0.985 }}
-          whileInView={{ opacity: 1, y: 0, scale: 1 }}
-          viewport={{ once: false, margin: "-100px" }}
-          transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
-          className="relative"
+          ref={ref}
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-80px" }}
+          transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+          className="relative overflow-hidden rounded-2xl border border-ink/15 bg-ink"
         >
-          {/* outer rule */}
-          <div className="relative rounded-[26px] border border-ink/20 p-3 md:p-4 bg-cream/40 backdrop-blur-[2px]">
-            <div className="edge-ticks relative overflow-hidden rounded-[18px] border-2 border-ink bg-ink gpu">
-              <div className="relative aspect-[16/10] md:aspect-[2.39/1] overflow-hidden">
-                <motion.img
-                  src={happyTown.url}
-                  alt="Happy Town key art"
-                  loading="lazy"
-                  decoding="async"
-                  initial={{ scale: 1.06 }}
-                  whileInView={{ scale: 1 }}
-                  viewport={{ once: false }}
-                  transition={{ duration: 1.6, ease: [0.22, 1, 0.36, 1] }}
-                  className="absolute inset-0 w-full h-full object-cover gpu"
-                />
-
-                {/* letterbox bars */}
-                <span className="pointer-events-none absolute inset-x-0 top-0 h-[6%] bg-ink" />
-                <span className="pointer-events-none absolute inset-x-0 bottom-0 h-[6%] bg-ink" />
-
-                {/* status chip */}
-                <div className="absolute top-[9%] left-5 md:left-8 flex items-center gap-2 px-3 py-1.5 rounded-full bg-ink/85 text-cream border border-cream/20">
-                  <span className="relative flex size-1.5">
-                    <span className="absolute inline-flex h-full w-full rounded-full bg-cream opacity-75 animate-ping" />
-                    <span className="relative inline-flex rounded-full size-1.5 bg-cream" />
-                  </span>
-                  <span className="font-mono text-[9px] uppercase tracking-[0.28em]">
-                    In production
-                  </span>
-                </div>
-
-                {/* corner crosses */}
-                {[
-                  "top-[9%] left-5 md:left-8",
-                  "top-[9%] right-5 md:right-8",
-                  "bottom-[9%] left-5 md:left-8",
-                  "bottom-[9%] right-5 md:right-8",
-                ]
-                  .slice(1)
-                  .map((pos) => (
-                    <span
-                      key={pos}
-                      aria-hidden
-                      className={`pointer-events-none absolute ${pos} size-3 border border-cream/50`}
-                    />
-                  ))}
-              </div>
-            </div>
+          <div className="relative aspect-[16/10] sm:aspect-[16/9] lg:aspect-[21/9]">
+            <motion.img
+              src={happyTown.url}
+              alt="Happy Town key art"
+              loading="lazy"
+              decoding="async"
+              style={{ y }}
+              className="absolute inset-0 size-full scale-105 object-contain sm:scale-110 sm:object-cover"
+            />
           </div>
 
-          {/* caption rail */}
-          <div className="mt-4 flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.28em] text-ink/45">
-            <span>Six Bullets Studio</span>
-            <span className="hidden sm:inline">Silent-hill slow burn</span>
-            <span>WIP</span>
-          </div>
         </motion.div>
+
+
+        {/* Spec rail */}
+        <div className="mt-10 grid grid-cols-2 gap-x-6 gap-y-6 border-t border-ink/12 pt-6 md:grid-cols-4">
+          {meta.map((m) => (
+            <div key={m.k}>
+              <div className="font-mono text-[9px] uppercase tracking-[0.28em] text-ink/40">
+                {m.k}
+              </div>
+              <div className="mt-1.5 text-sm text-ink md:text-base">{m.v}</div>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-8 flex flex-wrap items-center gap-4">
+          <a
+            href="https://discord.gg/ZWZuJVmRMF"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group inline-flex items-center gap-2 border border-ink/25 px-5 py-3 font-mono text-[10px] uppercase tracking-[0.24em] text-ink transition-colors hover:border-ink/60 hover:bg-ink/5"
+          >
+            Follow the development
+            <ArrowUpRight className="size-3.5 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+          </a>
+          <p className="max-w-sm text-sm leading-relaxed text-ink/60">
+            A quiet town that stops making sense. Built slow, on purpose.
+          </p>
+        </div>
       </div>
     </section>
   );

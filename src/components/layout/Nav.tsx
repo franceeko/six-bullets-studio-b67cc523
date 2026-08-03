@@ -1,6 +1,9 @@
 import { motion } from "framer-motion";
+import { ArrowUpRight } from "lucide-react";
+import { useState } from "react";
 
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
+import { MobileMenu } from "@/components/layout/MobileMenu";
 
 const links = [
   { href: "#happy-town", label: "Project" },
@@ -10,54 +13,70 @@ const links = [
 ];
 
 export function Nav() {
+  const [menuOpen, setMenuOpen] = useState(false);
+
   return (
-    <motion.header
-      initial={{ y: -40, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-      className="fixed top-0 inset-x-0 z-50 bg-cream/85 backdrop-blur-md border-b border-ink/12"
-    >
-      <nav className="max-w-[1400px] mx-auto px-6 lg:px-12 h-16 md:h-20 flex items-center justify-between">
-        <a href="#top" className="flex items-baseline gap-2">
-          <span
-            className="inline-block text-3xl md:text-4xl text-ink leading-none hover:text-wine transition-colors"
-            style={{ fontFamily: "var(--font-script)" }}
-          >
-            six bullets
-          </span>
-          <span className="font-mono text-[10px] uppercase tracking-[0.24em] text-ink/40 hidden md:inline">
-            / 6B
-          </span>
-        </a>
-
-        <ul className="hidden md:flex items-center gap-8 font-mono text-[11px] uppercase tracking-[0.22em] text-ink/70">
-          {links.map((l) => (
-            <li key={l.href}>
-              <a
-                href={l.href}
-                className="relative hover:text-ink transition-colors after:absolute after:left-0 after:-bottom-1.5 after:h-px after:w-0 after:bg-wine after:transition-all hover:after:w-full"
-              >
-                {l.label}
-              </a>
-            </li>
-          ))}
-        </ul>
-
-        <div className="flex items-center gap-2 md:gap-3">
-          <ThemeToggle />
-          <a
-            href="https://discord.gg/ZWZuJVmRMF"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group inline-flex items-center gap-2 pl-4 pr-1.5 py-1.5 bg-ink text-cream font-mono text-[10px] uppercase tracking-[0.22em] rounded-full hover:bg-wine transition-colors"
-          >
-            Discord
-            <span className="inline-flex items-center justify-center size-7 rounded-full bg-cream text-ink group-hover:translate-x-0.5 transition-transform">
-              ↗
+    <>
+      <motion.header
+        initial={{ y: -40, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+        className="fixed inset-x-0 top-0 z-[60] border-b border-ink/10 bg-cream/80 backdrop-blur-md"
+      >
+        <nav className="mx-auto grid h-16 max-w-[1500px] grid-cols-[minmax(0,1fr)_auto] items-center gap-4 px-6 md:grid-cols-[1fr_auto_1fr] lg:px-12">
+          <a href="#top" className="flex min-w-0 items-baseline gap-2">
+            <span
+              className="inline-block truncate text-3xl leading-none text-ink transition-colors hover:text-wine"
+              style={{ fontFamily: "var(--font-script)" }}
+            >
+              six bullets
+            </span>
+            <span className="hidden font-mono text-[10px] uppercase tracking-[0.24em] text-ink/40 lg:inline">
+              / 6B
             </span>
           </a>
-        </div>
-      </nav>
-    </motion.header>
+
+          <ul className="hidden items-center justify-center gap-9 font-mono text-[11px] uppercase tracking-[0.24em] text-ink/65 md:flex">
+            {links.map((l) => (
+              <li key={l.href}>
+                <a
+                  href={l.href}
+                  className="relative transition-colors after:absolute after:-bottom-1.5 after:left-0 after:h-px after:w-0 after:bg-ink after:transition-all hover:text-ink hover:after:w-full"
+                >
+                  {l.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+
+          <div className="flex items-center justify-end gap-2 md:gap-3">
+            <ThemeToggle />
+            <a
+              href="https://discord.gg/ZWZuJVmRMF"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hidden items-center gap-2 border border-ink/25 px-5 py-2.5 font-mono text-[10px] uppercase tracking-[0.24em] text-ink transition-colors hover:border-ink/60 hover:bg-ink/5 md:inline-flex"
+            >
+              Get in touch
+              <ArrowUpRight className="size-3.5" />
+            </a>
+
+            <button
+              type="button"
+              aria-label="Open menu"
+              aria-expanded={menuOpen}
+              onClick={() => setMenuOpen(true)}
+              className="flex size-10 flex-col items-center justify-center gap-1.5 md:hidden"
+            >
+              <span className="h-0.5 w-6 bg-ink" />
+              <span className="h-0.5 w-6 bg-ink" />
+              <span className="h-0.5 w-4 self-center bg-ink" style={{ marginRight: 8 }} />
+            </button>
+          </div>
+        </nav>
+      </motion.header>
+
+      <MobileMenu open={menuOpen} onClose={() => setMenuOpen(false)} links={links} />
+    </>
   );
 }

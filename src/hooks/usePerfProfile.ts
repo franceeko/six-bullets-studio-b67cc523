@@ -79,10 +79,12 @@ export function detectPerfTier(): PerfTier {
   if (reduced || gpu === 0) return "static";
   if (memory <= 2 || cores <= 2) return "minimal";
   if (coarse) {
-    if (narrow || memory <= 3 || cores <= 4) return "eco";
-    if (gpu >= 2 && cores >= 6) return "balanced";
+    // Phones stay conservative on purpose: the shader is decoration, a lost
+    // WebGL context (blank screen) is a bug the visitor actually notices.
+    if (narrow || memory <= 3 || cores <= 4) return "minimal";
     return "eco";
   }
+
   if (cores <= 4 || memory <= 4) return "balanced";
   if (gpu >= 3 && cores >= 8) return "ultra";
   return "high";

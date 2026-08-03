@@ -60,16 +60,16 @@ void main() {
   float m0 = min(uRes.x, uRes.y);
   vec2 st = (gl_FragCoord.xy - 0.5 * uRes.xy) / m0;
 
-  float t = uTime * 0.075;
+  float t = uTime * 0.05;
 
-  // pointer field — wide, strong pull plus a rotating swirl
+  // pointer field — gentle, wide pull with a very light swirl
   vec2 m = (uMouse - 0.5 * uRes.xy) / m0;
   vec2 d = st - m;
   float dist = length(d);
-  float falloff = exp(-dist * 1.5);
-  float pull = (0.55 + uPress * 0.9 + uVel * 1.4) * falloff;
-  vec2 swirl = vec2(-d.y, d.x) * pull * 3.2;
-  swirl += normalize(d + 0.0001) * pull * 0.9 * sin(uTime * 0.9 - dist * 6.0);
+  float falloff = exp(-dist * 1.9);
+  float pull = (0.16 + uPress * 0.22 + uVel * 0.40) * falloff;
+  vec2 swirl = vec2(-d.y, d.x) * pull * 0.9;
+  swirl += normalize(d + 0.0001) * pull * 0.25 * sin(uTime * 0.5 - dist * 4.0);
 
   // touch ripples — each is (x, y, strength) in the same normalised space
   float ripple = 0.0;
@@ -78,19 +78,20 @@ void main() {
     if (r.z > 0.001) {
       vec2 rd = st - r.xy;
       float rl = length(rd);
-      float wave = sin(rl * 22.0 - (1.0 - r.z) * 16.0) * exp(-rl * 3.4);
-      ripple += wave * r.z;
-      swirl += normalize(rd + 0.0001) * wave * r.z * 1.1;
+      float wave = sin(rl * 16.0 - (1.0 - r.z) * 12.0) * exp(-rl * 5.0);
+      ripple += wave * r.z * 0.5;
+      swirl += normalize(rd + 0.0001) * wave * r.z * 0.28;
     }
   }
 
-  vec2 q = vec2(fbm(st * 1.5 + vec2(0.0, t) + swirl * 0.35),
-                fbm(st * 1.5 + vec2(5.2, 1.3) - t * 0.8 + swirl * 0.35));
+  vec2 q = vec2(fbm(st * 1.5 + vec2(0.0, t) + swirl * 0.2),
+                fbm(st * 1.5 + vec2(5.2, 1.3) - t * 0.8 + swirl * 0.2));
 
-  vec2 r2 = vec2(fbm(st * 1.85 + 3.8 * q + vec2(1.7, 9.2) + t * 1.2 + swirl),
-                 fbm(st * 1.85 + 3.8 * q + vec2(8.3, 2.8) - t * 0.9 + swirl));
+  vec2 r2 = vec2(fbm(st * 1.85 + 3.8 * q + vec2(1.7, 9.2) + t * 1.2 + swirl * 0.6),
+                 fbm(st * 1.85 + 3.8 * q + vec2(8.3, 2.8) - t * 0.9 + swirl * 0.6));
 
-  float f = fbm(st * 1.35 + 3.4 * r2 + pull * 1.2) + ripple * 0.3;
+  float f = fbm(st * 1.35 + 3.4 * r2 + pull * 0.5) + ripple * 0.2;
+
 
   // light palette — cream / paper / bone / ink
   vec3 lBase = vec3(0.976, 0.972, 0.964);
@@ -193,7 +194,13 @@ export function LiquidBackground() {
     const uDark = gl.getUniformLocation(prog, "uDark");
     const uRipples = gl.getUniformLocation(prog, "uRipples");
 
-    const dpr = () => Math.min(window.devicePixelRatio || 1, settings.maxDpr) * settings.scale;
+    // Touch devices never go above dpr 1 — the extra pixels are the main
+    // cause of GPU memory pressure (and lost contexts) on phones.
+    const coarse =
+      typeof window !== "undefined" && window.matchMedia("(pointer: coarse)").matches;
+    const dprCap = coarse ? Math.min(1, settings.maxDpr) : settings.maxDpr;
+    const dpr = () => Math.min(window.devicePixelRatio || 1, dprCap) * settings.scale;
+
 
     let w = 1;
     let h = 1;
@@ -229,7 +236,8 @@ export function LiquidBackground() {
     type Ripple = { x: number; y: number; born: number };
     const ripples: Ripple[] = [];
     const rippleData = new Float32Array(MAX_RIPPLES * 3);
-    const RIPPLE_LIFE = 1900;
+    const RIPPLE_LIFE = 1100;
+    let lastRipple = 0;
 
     const toCanvas = (cx: number, cy: number) => {
       const s = dpr();
@@ -244,15 +252,20 @@ export function LiquidBackground() {
     };
 
     const addRipple = (cx: number, cy: number) => {
+      // Rate-limited: hammering the screen must never queue extra work.
+      const now = performance.now();
+      if (now - lastRipple < 220) return;
+      lastRipple = now;
       const m0 = Math.min(w, h);
       const p = toCanvas(cx, cy);
       ripples.push({
         x: (p.x - w / 2) / m0,
         y: (p.y - h / 2) / m0,
-        born: performance.now(),
+        born: now,
       });
       if (ripples.length > MAX_RIPPLES) ripples.shift();
     };
+
 
     const onPointerMove = (e: PointerEvent) => setTarget(e.clientX, e.clientY);
     const onPointerDown = (e: PointerEvent) => {
@@ -295,6 +308,8 @@ export function LiquidBackground() {
     // --- loop -------------------------------------------------------------
     let raf = 0;
     let running = true;
+    let lost = false;
+
     const start = performance.now();
     let frameBudget = 1000 / settings.fps;
     let last = 0;
@@ -312,17 +327,18 @@ export function LiquidBackground() {
 
       const time = (now - start) / 1000;
 
-      // inertia — the fluid keeps chasing the pointer after it stops
-      mx += (tx - mx) * 0.1;
-      my += (ty - my) * 0.1;
+      // inertia — the fluid drifts slowly toward the pointer, no whiplash
+      mx += (tx - mx) * 0.05;
+      my += (ty - my) * 0.05;
       const m0 = Math.min(w, h);
       const dx = (mx - lastX) / m0;
       const dy = (my - lastY) / m0;
       lastX = mx;
       lastY = my;
-      const speed = Math.min(1, Math.hypot(dx, dy) * 14);
-      vel += (speed - vel) * 0.12;
-      press += (targetPress - press) * 0.08;
+      const speed = Math.min(1, Math.hypot(dx, dy) * 8);
+      vel += (speed - vel) * 0.07;
+      press += (targetPress - press) * 0.05;
+
       dark += (targetDark - dark) * 0.08;
 
       rippleData.fill(0);
@@ -372,19 +388,40 @@ export function LiquidBackground() {
     };
     raf = requestAnimationFrame(render);
 
-    const onVisibility = () => {
-      if (document.hidden) {
-        running = false;
-        cancelAnimationFrame(raf);
-      } else if (!running) {
-        running = true;
-        last = 0;
-        windowStart = performance.now();
-        frames = 0;
-        raf = requestAnimationFrame(render);
-      }
+    const pause = () => {
+      if (!running) return;
+      running = false;
+      cancelAnimationFrame(raf);
     };
+    const resume = () => {
+      if (running || lost) return;
+      running = true;
+      last = 0;
+      windowStart = performance.now();
+      frames = 0;
+      raf = requestAnimationFrame(render);
+    };
+    const onVisibility = () => (document.hidden ? pause() : resume());
     document.addEventListener("visibilitychange", onVisibility);
+    window.addEventListener("pagehide", pause);
+    window.addEventListener("blur", pause);
+    window.addEventListener("focus", resume);
+    window.addEventListener("pageshow", resume);
+
+    // --- lost context (the classic mobile blank/grey screen) ---------------
+    const onLost = (e: Event) => {
+      e.preventDefault();
+      lost = true;
+      pause();
+      canvas.style.display = "none"; // fall back to the CSS gradient
+    };
+    const onRestored = () => {
+      lost = false;
+      canvas.style.display = "";
+      // Rebuild happens on the next mount; keep the gradient until then.
+    };
+    canvas.addEventListener("webglcontextlost", onLost as EventListener, false);
+    canvas.addEventListener("webglcontextrestored", onRestored, false);
 
     return () => {
       running = false;
@@ -398,12 +435,19 @@ export function LiquidBackground() {
       window.removeEventListener("touchend", onRelease);
       window.removeEventListener("pointerleave", onRelease);
       document.removeEventListener("visibilitychange", onVisibility);
+      window.removeEventListener("pagehide", pause);
+      window.removeEventListener("blur", pause);
+      window.removeEventListener("focus", resume);
+      window.removeEventListener("pageshow", resume);
+      canvas.removeEventListener("webglcontextlost", onLost as EventListener);
+      canvas.removeEventListener("webglcontextrestored", onRestored);
       themeObserver.disconnect();
       gl.deleteProgram(prog);
       gl.deleteShader(vs);
       gl.deleteShader(fs);
       gl.deleteBuffer(buf);
     };
+
   }, []);
 
   return (
