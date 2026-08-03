@@ -236,7 +236,8 @@ export function LiquidBackground() {
     type Ripple = { x: number; y: number; born: number };
     const ripples: Ripple[] = [];
     const rippleData = new Float32Array(MAX_RIPPLES * 3);
-    const RIPPLE_LIFE = 1900;
+    const RIPPLE_LIFE = 1100;
+    let lastRipple = 0;
 
     const toCanvas = (cx: number, cy: number) => {
       const s = dpr();
@@ -251,15 +252,20 @@ export function LiquidBackground() {
     };
 
     const addRipple = (cx: number, cy: number) => {
+      // Rate-limited: hammering the screen must never queue extra work.
+      const now = performance.now();
+      if (now - lastRipple < 220) return;
+      lastRipple = now;
       const m0 = Math.min(w, h);
       const p = toCanvas(cx, cy);
       ripples.push({
         x: (p.x - w / 2) / m0,
         y: (p.y - h / 2) / m0,
-        born: performance.now(),
+        born: now,
       });
       if (ripples.length > MAX_RIPPLES) ripples.shift();
     };
+
 
     const onPointerMove = (e: PointerEvent) => setTarget(e.clientX, e.clientY);
     const onPointerDown = (e: PointerEvent) => {
