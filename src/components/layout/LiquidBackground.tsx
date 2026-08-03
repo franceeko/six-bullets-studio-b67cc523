@@ -308,6 +308,8 @@ export function LiquidBackground() {
     // --- loop -------------------------------------------------------------
     let raf = 0;
     let running = true;
+    let lost = false;
+
     const start = performance.now();
     let frameBudget = 1000 / settings.fps;
     let last = 0;
