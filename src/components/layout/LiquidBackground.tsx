@@ -194,7 +194,13 @@ export function LiquidBackground() {
     const uDark = gl.getUniformLocation(prog, "uDark");
     const uRipples = gl.getUniformLocation(prog, "uRipples");
 
-    const dpr = () => Math.min(window.devicePixelRatio || 1, settings.maxDpr) * settings.scale;
+    // Touch devices never go above dpr 1 — the extra pixels are the main
+    // cause of GPU memory pressure (and lost contexts) on phones.
+    const coarse =
+      typeof window !== "undefined" && window.matchMedia("(pointer: coarse)").matches;
+    const dprCap = coarse ? Math.min(1, settings.maxDpr) : settings.maxDpr;
+    const dpr = () => Math.min(window.devicePixelRatio || 1, dprCap) * settings.scale;
+
 
     let w = 1;
     let h = 1;
