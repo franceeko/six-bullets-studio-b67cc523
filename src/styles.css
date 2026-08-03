@@ -200,11 +200,8 @@
   backface-visibility: hidden;
 }
 
-/* Skip rendering off-screen sections — browser only paints what's visible */
-@utility section-lazy {
-  content-visibility: auto;
-  contain-intrinsic-size: 1px 900px;
-}
+/* (content-visibility removed — it caused scroll jumps on long sections) */
+
 
 /* Cleaner tactile background — soft dots + mouse-reactive wine glow + slow drift */
 @utility cream-tex {
