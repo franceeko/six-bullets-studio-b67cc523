@@ -386,19 +386,40 @@ export function LiquidBackground() {
     };
     raf = requestAnimationFrame(render);
 
-    const onVisibility = () => {
-      if (document.hidden) {
-        running = false;
-        cancelAnimationFrame(raf);
-      } else if (!running) {
-        running = true;
-        last = 0;
-        windowStart = performance.now();
-        frames = 0;
-        raf = requestAnimationFrame(render);
-      }
+    const pause = () => {
+      if (!running) return;
+      running = false;
+      cancelAnimationFrame(raf);
     };
+    const resume = () => {
+      if (running || lost) return;
+      running = true;
+      last = 0;
+      windowStart = performance.now();
+      frames = 0;
+      raf = requestAnimationFrame(render);
+    };
+    const onVisibility = () => (document.hidden ? pause() : resume());
     document.addEventListener("visibilitychange", onVisibility);
+    window.addEventListener("pagehide", pause);
+    window.addEventListener("blur", pause);
+    window.addEventListener("focus", resume);
+    window.addEventListener("pageshow", resume);
+
+    // --- lost context (the classic mobile blank/grey screen) ---------------
+    const onLost = (e: Event) => {
+      e.preventDefault();
+      lost = true;
+      pause();
+      canvas.style.display = "none"; // fall back to the CSS gradient
+    };
+    const onRestored = () => {
+      lost = false;
+      canvas.style.display = "";
+      // Rebuild happens on the next mount; keep the gradient until then.
+    };
+    canvas.addEventListener("webglcontextlost", onLost as EventListener, false);
+    canvas.addEventListener("webglcontextrestored", onRestored, false);
 
     return () => {
       running = false;
@@ -412,12 +433,19 @@ export function LiquidBackground() {
       window.removeEventListener("touchend", onRelease);
       window.removeEventListener("pointerleave", onRelease);
       document.removeEventListener("visibilitychange", onVisibility);
+      window.removeEventListener("pagehide", pause);
+      window.removeEventListener("blur", pause);
+      window.removeEventListener("focus", resume);
+      window.removeEventListener("pageshow", resume);
+      canvas.removeEventListener("webglcontextlost", onLost as EventListener);
+      canvas.removeEventListener("webglcontextrestored", onRestored);
       themeObserver.disconnect();
       gl.deleteProgram(prog);
       gl.deleteShader(vs);
       gl.deleteShader(fs);
       gl.deleteBuffer(buf);
     };
+
   }, []);
 
   return (
