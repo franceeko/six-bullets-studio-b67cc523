@@ -33,32 +33,27 @@ export function HappyTown() {
           </span>
         </div>
 
-        {/* Art block with the title riding over it */}
+        {/* Key art */}
         <motion.div
           ref={ref}
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-          className="relative"
+          className="relative overflow-hidden rounded-2xl border border-ink/15 bg-ink"
         >
-          <div className="relative overflow-hidden rounded-2xl border border-ink/15 bg-ink">
-            <div className="relative aspect-[4/5] sm:aspect-[16/9] lg:aspect-[21/9]">
-              <motion.img
-                src={happyTown.url}
-                alt="Happy Town key art"
-                loading="lazy"
-                decoding="async"
-                style={{ y }}
-                className="absolute inset-0 size-full scale-110 object-cover"
-              />
-            </div>
+          <div className="relative aspect-[4/5] sm:aspect-[16/9] lg:aspect-[21/9]">
+            <motion.img
+              src={happyTown.url}
+              alt="Happy Town key art"
+              loading="lazy"
+              decoding="async"
+              style={{ y }}
+              className="absolute inset-0 size-full scale-110 object-cover"
+            />
           </div>
-
-          <h2 className="pointer-events-none relative z-10 -mt-[0.34em] px-2 font-display uppercase leading-[0.82] tracking-[-0.04em] text-ink text-[clamp(3rem,12vw,11rem)] md:px-6">
-            Happy Town
-          </h2>
         </motion.div>
+
 
         {/* Spec rail */}
         <div className="mt-10 grid grid-cols-2 gap-x-6 gap-y-6 border-t border-ink/12 pt-6 md:grid-cols-4">
