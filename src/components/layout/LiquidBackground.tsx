@@ -325,17 +325,18 @@ export function LiquidBackground() {
 
       const time = (now - start) / 1000;
 
-      // inertia — the fluid keeps chasing the pointer after it stops
-      mx += (tx - mx) * 0.1;
-      my += (ty - my) * 0.1;
+      // inertia — the fluid drifts slowly toward the pointer, no whiplash
+      mx += (tx - mx) * 0.05;
+      my += (ty - my) * 0.05;
       const m0 = Math.min(w, h);
       const dx = (mx - lastX) / m0;
       const dy = (my - lastY) / m0;
       lastX = mx;
       lastY = my;
-      const speed = Math.min(1, Math.hypot(dx, dy) * 14);
-      vel += (speed - vel) * 0.12;
-      press += (targetPress - press) * 0.08;
+      const speed = Math.min(1, Math.hypot(dx, dy) * 8);
+      vel += (speed - vel) * 0.07;
+      press += (targetPress - press) * 0.05;
+
       dark += (targetDark - dark) * 0.08;
 
       rippleData.fill(0);
