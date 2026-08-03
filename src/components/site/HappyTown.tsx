@@ -48,16 +48,17 @@ export function HappyTown() {
           transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
           className="relative overflow-hidden rounded-2xl border border-ink/15 bg-ink"
         >
-          <div className="relative aspect-[4/5] sm:aspect-[16/9] lg:aspect-[21/9]">
+          <div className="relative aspect-[16/10] sm:aspect-[16/9] lg:aspect-[21/9]">
             <motion.img
               src={happyTown.url}
               alt="Happy Town key art"
               loading="lazy"
               decoding="async"
               style={{ y }}
-              className="absolute inset-0 size-full scale-110 object-cover"
+              className="absolute inset-0 size-full scale-105 object-contain sm:scale-110 sm:object-cover"
             />
           </div>
+
         </motion.div>
 
 
