@@ -503,3 +503,23 @@
 }
 
 
+/* Phones: no animated grain layer — it repaints the whole viewport. */
+@media (pointer: coarse) {
+  .liquid-grain { animation: none !important; opacity: 0.04; }
+  .grain { animation: none !important; }
+}
+
+/* Staggered entrance utilities (hero, mobile menu) */
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@utility fade-up {
+  opacity: 0;
+  animation: fade-up 0.85s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fade-up { animation: none !important; opacity: 1 !important; }
+}
