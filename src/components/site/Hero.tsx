@@ -17,7 +17,7 @@ export function Hero() {
       id="top"
       className="relative flex min-h-[100svh] flex-col justify-end overflow-hidden pt-28 md:pt-32"
     >
-      <div className="relative mx-auto w-full max-w-[1500px] flex-1 px-6 lg:px-12">
+      <div className="relative mx-auto flex w-full max-w-[1500px] flex-1 px-6 lg:px-12">
         <div className="edge-frame edge-ticks relative flex h-full flex-col justify-between rounded-sm p-5 sm:p-8 lg:p-10">
           {/* Top rail */}
           <div className="flex flex-wrap items-center justify-between gap-4">
