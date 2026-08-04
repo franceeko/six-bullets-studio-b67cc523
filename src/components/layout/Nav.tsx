@@ -31,7 +31,7 @@ export function Nav() {
             >
               six bullets
             </span>
-            <span className="hidden font-mono text-[10px] uppercase tracking-[0.24em] text-ink/40 lg:inline">
+            <span className="hidden font-mono text-[10px] uppercase tracking-[0.24em] text-ink/65 lg:inline">
               / 6B
             </span>
           </a>
