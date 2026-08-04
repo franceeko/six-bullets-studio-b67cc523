@@ -92,42 +92,48 @@ void main() {
 
   float f = fbm(st * 1.35 + 3.4 * r2 + pull * 0.5) + ripple * 0.2;
 
+  float pulse = 0.5 + 0.5 * sin(uTime * 0.35);
 
-  // light palette — cream / paper / bone / ink
-  vec3 lBase = vec3(0.976, 0.972, 0.964);
-  vec3 lMid  = vec3(0.925, 0.918, 0.906);
-  vec3 lEdge = vec3(0.836, 0.828, 0.816);
-  vec3 lVein = vec3(0.090, 0.090, 0.090);
+  // light palette — graphite paper: visible steps, no white-on-white
+  vec3 lBase = vec3(0.945, 0.943, 0.938);
+  vec3 lMid  = vec3(0.862, 0.858, 0.852);
+  vec3 lEdge = vec3(0.735, 0.731, 0.726);
+  vec3 lVein = vec3(0.055, 0.055, 0.055);
 
-  // dark palette — graphite / slate with a warm amber vein
-  vec3 dBase = vec3(0.068, 0.066, 0.072);
-  vec3 dMid  = vec3(0.115, 0.112, 0.123);
-  vec3 dEdge = vec3(0.172, 0.166, 0.184);
-  vec3 dVein = vec3(0.870, 0.650, 0.330);
+  // dark palette — true black with hot gold veins
+  vec3 dBase = vec3(0.035, 0.033, 0.031);
+  vec3 dMid  = vec3(0.085, 0.080, 0.072);
+  vec3 dEdge = vec3(0.152, 0.140, 0.118);
+  vec3 dVein = vec3(0.980, 0.760, 0.320);
 
   vec3 base = mix(lBase, dBase, uDark);
   vec3 mid  = mix(lMid,  dMid,  uDark);
   vec3 edge = mix(lEdge, dEdge, uDark);
   vec3 vein = mix(lVein, dVein, uDark);
 
-  float band = smoothstep(-0.4, 0.6, f);
-  vec3 col = mix(base, mid, smoothstep(0.12, 0.88, band));
-  col = mix(col, edge, smoothstep(0.58, 1.0, band) * 0.9);
+  float band = smoothstep(-0.34, 0.52, f);
+  vec3 col = mix(base, mid, smoothstep(0.06, 0.94, band));
+  col = mix(col, edge, smoothstep(0.50, 1.0, band) * 1.0);
 
   ${
     rich
       ? `
-  float veinMask = smoothstep(0.02, 0.0, abs(f - 0.16));
-  col = mix(col, vein, veinMask * mix(0.14, 0.28, uDark));
-  float veinMask2 = smoothstep(0.012, 0.0, abs(f + 0.10));
-  col = mix(col, vein, veinMask2 * mix(0.07, 0.16, uDark));
+  float veinMask = smoothstep(0.026, 0.0, abs(f - 0.16));
+  col = mix(col, vein, veinMask * mix(0.22, 0.42, uDark) * (0.75 + 0.25 * pulse));
+  float veinMask2 = smoothstep(0.016, 0.0, abs(f + 0.10));
+  col = mix(col, vein, veinMask2 * mix(0.12, 0.26, uDark) * (0.85 + 0.15 * (1.0 - pulse)));
+  float veinMask3 = smoothstep(0.010, 0.0, abs(f - 0.34));
+  col = mix(col, vein, veinMask3 * mix(0.08, 0.20, uDark));
   `
-      : ``
+      : `
+  float veinMaskS = smoothstep(0.018, 0.0, abs(f - 0.16));
+  col = mix(col, vein, veinMaskS * mix(0.14, 0.30, uDark));
+  `
   }
-  col = mix(col, vein, clamp(pull, 0.0, 1.0) * mix(0.07, 0.14, uDark));
+  col = mix(col, vein, clamp(pull, 0.0, 1.0) * mix(0.09, 0.18, uDark));
 
   float vig = smoothstep(1.15, 0.25, length(uv - 0.5) * 1.4);
-  col *= mix(mix(0.94, 1.0, vig), mix(0.80, 1.06, vig), uDark);
+  col *= mix(mix(0.90, 1.0, vig), mix(0.62, 1.10, vig), uDark);
 
   gl_FragColor = vec4(col, 1.0);
 }
