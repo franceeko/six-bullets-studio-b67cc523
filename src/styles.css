@@ -92,13 +92,13 @@
   --secondary: var(--paper);
   --secondary-foreground: var(--ink);
   --muted: var(--paper);
-  --muted-foreground: oklch(0.42 0 0);
+  --muted-foreground: oklch(0.34 0 0);
   --accent: var(--butter);
   --accent-foreground: var(--ink);
   --destructive: oklch(0.55 0.22 27);
   --destructive-foreground: var(--cream);
-  --border: oklch(0 0 0 / 15%);
-  --input: oklch(0 0 0 / 15%);
+  --border: oklch(0 0 0 / 26%);
+  --input: oklch(0 0 0 / 26%);
   --ring: var(--wine);
 }
 
