@@ -123,12 +123,12 @@
   --lilac: oklch(0.48 0.04 290);
   --ember: oklch(0.62 0.12 50);
 
-  --muted-foreground: oklch(0.72 0.006 80);
-  --accent: var(--amber);
+  --muted-foreground: oklch(0.78 0.008 85);
+  --accent: var(--wine);
   --accent-foreground: var(--cream);
   --primary-foreground: var(--cream);
-  --border: oklch(1 0 0 / 14%);
-  --input: oklch(1 0 0 / 14%);
+  --border: oklch(1 0 0 / 20%);
+  --input: oklch(1 0 0 / 20%);
 }
 
 /* Hairline frame with corner ticks — the "compute" detail language */
