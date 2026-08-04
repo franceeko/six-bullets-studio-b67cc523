@@ -108,7 +108,7 @@ function TeamCard({ dev, index }: { dev: Dev; index: number }) {
       <motion.div
         variants={{ hover: { rotate: 90 } }}
         transition={{ type: "spring", stiffness: 180, damping: 16 }}
-        className="absolute top-5 right-6 font-mono text-[10px] tracking-[0.24em] text-ink/40"
+        className="absolute top-5 right-6 font-mono text-[10px] tracking-[0.24em] text-ink/65"
       >
         {String(index + 1).padStart(2, "0")}
       </motion.div>
