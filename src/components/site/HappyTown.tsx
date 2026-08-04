@@ -107,7 +107,7 @@ export function HappyTown() {
           </div>
 
           <div className="edge-ticks relative overflow-hidden rounded-2xl border-2 border-ink/25 bg-[#0b0a0a]">
-            <div className="relative aspect-[16/10] sm:aspect-[21/9]">
+            <div className="relative aspect-[16/10] sm:aspect-[16/9] lg:aspect-[2/1]">
               {playVideo ? (
                 <video
                   src={watcherVideo.url}
@@ -118,7 +118,7 @@ export function HappyTown() {
                   playsInline
                   preload="none"
                   aria-label="Smile Watcher reveal"
-                  className="absolute inset-0 size-full object-cover"
+                  className="absolute inset-0 size-full object-contain"
                 />
               ) : (
                 <img
@@ -126,7 +126,7 @@ export function HappyTown() {
                   alt="Smile Watcher — Happy Town chapter 01 entity"
                   loading="lazy"
                   decoding="async"
-                  className="absolute inset-0 size-full object-cover"
+                  className="absolute inset-0 size-full object-contain"
                 />
               )}
               <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(120%_90%_at_50%_50%,transparent_35%,rgba(0,0,0,0.75)_100%)]" />
