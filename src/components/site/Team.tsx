@@ -60,32 +60,32 @@ function Niche({ dev, index }: { dev: Dev; index: number }) {
   const lift = ARCH[index % ARCH.length] ?? 0;
 
   return (
-    <motion.article
-      initial={{ opacity: 0, y: 46 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-60px" }}
-      transition={{ delay: (index % 7) * 0.07, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-      className="altar-niche group relative"
-      style={{ transform: `translateY(${lift}px)` }}
-    >
-      <div className="altar-frame relative overflow-hidden">
-        <NicheMedia dev={dev} />
-        <span aria-hidden className="altar-glow" />
-        <span aria-hidden className="altar-sweep" />
-        <span className="absolute right-2 top-2 font-mono text-[9px] tracking-[0.24em] text-ink/55 mix-blend-difference">
-          {String(index + 1).padStart(2, "0")}
-        </span>
-      </div>
+    <div className="altar-niche group relative" style={{ transform: `translateY(${lift}px)` }}>
+      <motion.article
+        initial={{ opacity: 0, y: 46 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-60px" }}
+        transition={{ delay: (index % 7) * 0.07, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+      >
+        <div className="altar-frame relative overflow-hidden">
+          <NicheMedia dev={dev} />
+          <span aria-hidden className="altar-glow" />
+          <span aria-hidden className="altar-sweep" />
+          <span className="absolute right-2 top-2 font-mono text-[9px] tracking-[0.24em] text-ink/55">
+            {String(index + 1).padStart(2, "0")}
+          </span>
+        </div>
 
-      <div className="mt-3 text-center">
-        <h3 className="font-display text-2xl italic leading-none tracking-tight text-ink md:text-3xl">
-          {dev.name}
-        </h3>
-        <p className="mt-1.5 font-mono text-[9px] uppercase leading-relaxed tracking-[0.2em] text-ink/65">
-          {dev.role}
-        </p>
-      </div>
-    </motion.article>
+        <div className="mt-3 text-center">
+          <h3 className="font-display text-2xl italic leading-none tracking-tight text-ink md:text-3xl">
+            {dev.name}
+          </h3>
+          <p className="mt-1.5 font-mono text-[9px] uppercase leading-relaxed tracking-[0.2em] text-ink/65">
+            {dev.role}
+          </p>
+        </div>
+      </motion.article>
+    </div>
   );
 }
 
