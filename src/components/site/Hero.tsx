@@ -1,127 +1,128 @@
-import { motion } from "framer-motion";
-import { ArrowUpRight, Crown } from "lucide-react";
+import { motion, useMotionValue, useScroll, useSpring, useTransform } from "framer-motion";
+import { ArrowDown } from "lucide-react";
+import { useEffect, useRef } from "react";
 
-import happyTown from "@/assets/happy-town-banner.png.asset.json";
+const LINES = ["SIX", "BULLETS"];
 
-const stats = [
-  { value: "14", label: "People on the crew" },
-  { value: "01", label: "Project in production" },
-  { value: "Roblox", label: "Platform" },
-];
+function Letter({
+  char,
+  index,
+  depth,
+  px,
+  py,
+}: {
+  char: string;
+  index: number;
+  depth: number;
+  px: ReturnType<typeof useSpring>;
+  py: ReturnType<typeof useSpring>;
+}) {
+  const x = useTransform(px, (v: number) => v * depth);
+  const y = useTransform(py, (v: number) => v * depth * 0.6);
 
-const lines = ["Build.", "Unsettle.", "Haunt."];
+  return (
+    <span className="inline-block overflow-hidden align-bottom" style={{ lineHeight: 0.82 }}>
+      <motion.span
+        style={{ x, y }}
+        initial={{ y: "115%", rotate: 4 }}
+        animate={{ y: "0%", rotate: 0 }}
+        transition={{
+          delay: 0.12 + index * 0.055,
+          duration: 1.15,
+          ease: [0.16, 1, 0.3, 1],
+        }}
+        className="inline-block will-change-transform"
+      >
+        {char}
+      </motion.span>
+    </span>
+  );
+}
 
 export function Hero() {
+  const ref = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start start", "end start"],
+  });
+  const titleScale = useTransform(scrollYProgress, [0, 1], [1, 0.82]);
+  const titleY = useTransform(scrollYProgress, [0, 1], ["0%", "22%"]);
+  const titleOpacity = useTransform(scrollYProgress, [0, 0.85], [1, 0]);
+
+  // pointer depth — each letter drifts a little, deeper letters move more
+  const rawX = useMotionValue(0);
+  const rawY = useMotionValue(0);
+  const px = useSpring(rawX, { stiffness: 60, damping: 20, mass: 0.6 });
+  const py = useSpring(rawY, { stiffness: 60, damping: 20, mass: 0.6 });
+
+  useEffect(() => {
+    const onMove = (e: PointerEvent) => {
+      rawX.set((e.clientX / window.innerWidth - 0.5) * 40);
+      rawY.set((e.clientY / window.innerHeight - 0.5) * 26);
+    };
+    window.addEventListener("pointermove", onMove, { passive: true });
+    return () => window.removeEventListener("pointermove", onMove);
+  }, [rawX, rawY]);
+
+  let counter = 0;
+
   return (
     <section
+      ref={ref}
       id="top"
-      className="relative flex min-h-[100svh] flex-col justify-end overflow-hidden pt-28 md:pt-32"
+      className="relative flex min-h-[100svh] flex-col justify-center overflow-hidden"
     >
-      <div className="relative mx-auto flex w-full max-w-[1500px] flex-1 px-6 lg:px-12">
-        <div className="edge-frame edge-ticks relative flex w-full flex-col justify-between rounded-sm p-5 sm:p-8 lg:p-10">
-          {/* Top rail */}
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            <div className="fade-up flex items-center gap-3">
-              <Crown className="size-4 shrink-0 text-wine" />
-              <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-ink/75 sm:text-xs">
-                Roblox horror collective
-              </span>
-            </div>
-            <span
-              className="fade-up hidden font-mono text-[10px] uppercase tracking-[0.3em] text-ink/60 sm:inline"
-              style={{ animationDelay: "0.1s" }}
-            >
-              Six Bullets — 6B
-            </span>
-          </div>
-
-          {/* Anchored title */}
-          <div className="mt-16 md:mt-24">
-            <h1 className="font-display uppercase leading-[0.86] tracking-[-0.035em] text-ink">
-              {lines.map((line, i) => (
-                <span key={line} className="block overflow-hidden py-[0.02em]">
-                  <span
-                    className="line-reveal flex items-center gap-4 text-[clamp(3.2rem,12vw,10rem)] md:gap-7"
-                    style={{ animationDelay: `${0.12 + i * 0.13}s` }}
-                  >
-                    <span className={i === 1 ? "italic" : undefined}>{line}</span>
-                    {i === 1 && (
-                      <span className="hidden size-[0.6em] shrink-0 overflow-hidden rounded-[0.1em] border-2 border-wine/70 shadow-[0_0_0_4px_color-mix(in_oklab,var(--wine)_12%,transparent)] sm:inline-block">
-                        <img
-                          src={happyTown.url}
-                          alt=""
-                          loading="eager"
-                          decoding="async"
-                          className="size-full object-cover"
-                        />
-                      </span>
-                    )}
-                  </span>
-                </span>
-              ))}
-            </h1>
-
-            <div className="mt-8 flex flex-col gap-8 border-t border-ink/25 pt-6 md:flex-row md:items-end md:justify-between">
-              <p
-                className="fade-up max-w-md text-sm leading-relaxed text-ink/75 sm:text-base"
-                style={{ animationDelay: "0.6s" }}
-              >
-                Fourteen people, one game. Now cooking{" "}
-                <span className="font-medium text-ink">Happy Town</span> — a slow-burn
-                psychological horror on Roblox.
-              </p>
-
-              <div
-                className="fade-up flex flex-wrap items-center gap-4 sm:gap-6"
-                style={{ animationDelay: "0.72s" }}
-              >
-                <a
-                  href="#happy-town"
-                  className="group inline-flex items-center gap-3 bg-ink px-6 py-4 font-mono text-[11px] uppercase tracking-[0.24em] text-cream transition-colors hover:bg-wine hover:text-cream"
-                >
-                  See the project
-                  <ArrowUpRight className="size-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-                </a>
-                <a
-                  href="#equipe"
-                  className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.24em] text-ink/70 transition-colors hover:text-ink"
-                >
-                  Meet the crew ↓
-                </a>
-              </div>
-            </div>
-          </div>
-
-          {/* Stats ruler */}
-          <div
-            className="fade-up mt-10 grid grid-cols-3 divide-x divide-ink/20 border-t border-ink/25 pt-5"
-            style={{ animationDelay: "0.9s" }}
-          >
-            {stats.map((s, i) => (
-              <div key={s.label} className={i === 0 ? "pr-4" : "px-4"}>
-                <div className="text-xl font-semibold tracking-tight text-ink sm:text-3xl lg:text-4xl">
-                  {s.value}
-                </div>
-                <div className="mt-1 font-mono text-[9px] uppercase tracking-[0.24em] text-ink/60 sm:text-[11px]">
-                  {s.label}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
       <motion.div
+        style={{ scale: titleScale, y: titleY, opacity: titleOpacity }}
+        className="mx-auto w-full max-w-[1600px] origin-center px-5 lg:px-10"
+      >
+        <h1 className="font-display uppercase leading-[0.82] tracking-[-0.045em] text-ink">
+          {LINES.map((line, li) => (
+            <span
+              key={line}
+              className={`flex w-full ${li === 1 ? "justify-between" : "justify-start"}`}
+              style={{ fontSize: li === 0 ? "clamp(5rem,26vw,20rem)" : "clamp(3.4rem,18.2vw,14rem)" }}
+            >
+              {line.split("").map((char, ci) => {
+                const i = counter++;
+                const depth = 0.35 + ((i * 7) % 10) / 12;
+                return (
+                  <Letter key={`${line}-${ci}`} char={char} index={i} depth={depth} px={px} py={py} />
+                );
+              })}
+            </span>
+          ))}
+        </h1>
+
+        <motion.div
+          initial={{ opacity: 0, y: 18 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.9, duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+          className="mt-7 flex flex-wrap items-center justify-between gap-5 border-t border-ink/25 pt-5"
+        >
+          <span className="font-mono text-[10px] uppercase tracking-[0.34em] text-ink/75 sm:text-xs">
+            Roblox horror studio
+          </span>
+          <a
+            href="#happy-town"
+            className="group inline-flex items-center gap-3 font-mono text-[10px] uppercase tracking-[0.28em] text-ink transition-colors hover:text-wine sm:text-xs"
+          >
+            Happy Town
+            <span className="inline-block h-px w-10 bg-ink/50 transition-all group-hover:w-16 group-hover:bg-wine" />
+          </a>
+        </motion.div>
+      </motion.div>
+
+      <motion.a
+        href="#studio"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 1.3, duration: 1 }}
-        className="relative mx-auto mt-8 flex w-full max-w-[1500px] items-end justify-between px-6 pb-8 font-mono text-[10px] uppercase tracking-[0.3em] text-ink/55 lg:px-12"
+        transition={{ delay: 1.4, duration: 1 }}
+        className="absolute inset-x-0 bottom-7 mx-auto flex w-full max-w-[1600px] items-center gap-3 px-5 font-mono text-[10px] uppercase tracking-[0.3em] text-ink/60 lg:px-10"
       >
-        <span className="flex items-center gap-2">
-          <span className="inline-block h-px w-8 bg-ink/40" /> Scroll
-        </span>
-        <span className="hidden sm:inline">Six Bullets Studio</span>
-      </motion.div>
+        <ArrowDown className="size-3.5 animate-bounce" />
+        Scroll
+      </motion.a>
     </section>
   );
 }

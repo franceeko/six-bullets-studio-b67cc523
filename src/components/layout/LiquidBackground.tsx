@@ -3,8 +3,14 @@ import { useEffect, useRef } from "react";
 import { detectPerfTier, PERF_SETTINGS, downgrade, type PerfTier } from "@/hooks/usePerfProfile";
 
 /**
- * Liquid background — WebGL fragment shader (fbm + domain warping) with strong
- * pointer/touch reactivity, light+dark palettes and a six-step render budget.
+ * Liquid background — a real water surface.
+ *
+ * Instead of the old fbm blob field (which read as gelatin), this builds a
+ * height field from crossing directional waves, derives a surface normal from
+ * it and shades it: soft shadows in the troughs, thin caustic lines where the
+ * light focuses, and a specular glint on the crests. Pointer/touch adds
+ * expanding rings that disperse and die out.
+ *
  * Falls back to the CSS gradient painted by `.liquid-bg` when WebGL is
  * unavailable or the device is too weak to afford a shader.
  */
@@ -16,7 +22,30 @@ void main() { gl_Position = vec4(p, 0.0, 1.0); }
 
 const MAX_RIPPLES = 5;
 
-const frag = (octaves: number, rich: boolean) => `
+/** Directional wave bank: dir.xy, frequency, speed, amplitude. */
+const WAVES: Array<[number, number, number, number, number]> = [
+  [1.0, 0.28, 3.0, 1.05, 1.0],
+  [-0.62, 1.0, 4.35, -0.82, 0.72],
+  [0.86, -0.9, 6.1, 1.4, 0.46],
+  [-1.0, -0.42, 8.4, -1.15, 0.3],
+  [0.35, 1.0, 12.2, 1.75, 0.17],
+  [-0.9, 0.62, 17.5, -1.35, 0.1],
+  [1.0, 0.9, 24.0, 2.1, 0.06],
+  [0.2, -1.0, 33.0, -1.9, 0.035],
+];
+
+const waveBank = (count: number) =>
+  WAVES.slice(0, Math.max(2, Math.min(WAVES.length, count)))
+    .map(([dx, dy, f, s, a]) => {
+      const len = Math.hypot(dx, dy) || 1;
+      return `  h += ${a.toFixed(3)} * sin(dot(p, vec2(${(dx / len).toFixed(4)}, ${(
+        dy / len
+      ).toFixed(4)})) * ${f.toFixed(3)} + t * ${s.toFixed(3)});`;
+    })
+    .join("\n");
+
+/** exported so the GLSL can be compile-tested outside the browser harness */
+export const frag = (waves: number, rich: boolean) => `
 precision mediump float;
 
 uniform vec2  uRes;
@@ -27,32 +56,37 @@ uniform float uVel;
 uniform float uDark;
 uniform vec3  uRipples[${MAX_RIPPLES}];
 
-vec2 hash2(vec2 p) {
-  p = vec2(dot(p, vec2(127.1, 311.7)), dot(p, vec2(269.5, 183.3)));
-  return -1.0 + 2.0 * fract(sin(p) * 43758.5453123);
+// ---- surface height -------------------------------------------------------
+float waveField(vec2 p, float t) {
+  float h = 0.0;
+${waveBank(waves)}
+  return h;
 }
 
-float noise(vec2 p) {
-  vec2 i = floor(p);
-  vec2 f = fract(p);
-  vec2 u = f * f * (3.0 - 2.0 * f);
-  return mix(
-    mix(dot(hash2(i + vec2(0.0, 0.0)), f - vec2(0.0, 0.0)),
-        dot(hash2(i + vec2(1.0, 0.0)), f - vec2(1.0, 0.0)), u.x),
-    mix(dot(hash2(i + vec2(0.0, 1.0)), f - vec2(0.0, 1.0)),
-        dot(hash2(i + vec2(1.0, 1.0)), f - vec2(1.0, 1.0)), u.x), u.y);
-}
+float surface(vec2 p, float t, vec2 m, float press, float vel) {
+  // slow lateral drift keeps the sheet alive without the pointer
+  vec2 q = p + vec2(t * 0.012, t * 0.006);
 
-float fbm(vec2 p) {
-  float v = 0.0;
-  float a = 0.5;
-  mat2 rot = mat2(0.8, 0.6, -0.6, 0.8);
-  for (int i = 0; i < ${octaves}; i++) {
-    v += a * noise(p);
-    p = rot * p * 2.02;
-    a *= 0.5;
+  // gentle swell around the pointer — a wide, soft bulge, never a yank
+  vec2 d = q - m;
+  float dist = length(d);
+  float swell = exp(-dist * 2.2) * (0.10 + press * 0.16 + vel * 0.26);
+  q -= normalize(d + 0.0001) * swell * 0.35;
+
+  float h = waveField(q, t);
+
+  // ripples: expanding rings that spread and fade
+  for (int i = 0; i < ${MAX_RIPPLES}; i++) {
+    vec3 r = uRipples[i];
+    if (r.z > 0.001) {
+      float age = 1.0 - r.z;
+      float rl = length(q - r.xy);
+      float front = rl - age * 0.85;
+      h += 0.55 * r.z * sin(front * 26.0) * exp(-abs(front) * 9.0) * exp(-rl * 1.4);
+    }
   }
-  return v;
+
+  return h;
 }
 
 void main() {
@@ -60,80 +94,61 @@ void main() {
   float m0 = min(uRes.x, uRes.y);
   vec2 st = (gl_FragCoord.xy - 0.5 * uRes.xy) / m0;
 
-  float t = uTime * 0.05;
-
-  // pointer field — gentle, wide pull with a very light swirl
+  float t = uTime * 0.34;
   vec2 m = (uMouse - 0.5 * uRes.xy) / m0;
-  vec2 d = st - m;
-  float dist = length(d);
-  float falloff = exp(-dist * 1.9);
-  float pull = (0.16 + uPress * 0.22 + uVel * 0.40) * falloff;
-  vec2 swirl = vec2(-d.y, d.x) * pull * 0.9;
-  swirl += normalize(d + 0.0001) * pull * 0.25 * sin(uTime * 0.5 - dist * 4.0);
 
-  // touch ripples — each is (x, y, strength) in the same normalised space
-  float ripple = 0.0;
-  for (int i = 0; i < ${MAX_RIPPLES}; i++) {
-    vec3 r = uRipples[i];
-    if (r.z > 0.001) {
-      vec2 rd = st - r.xy;
-      float rl = length(rd);
-      float wave = sin(rl * 16.0 - (1.0 - r.z) * 12.0) * exp(-rl * 5.0);
-      ripple += wave * r.z * 0.5;
-      swirl += normalize(rd + 0.0001) * wave * r.z * 0.28;
-    }
-  }
+  float e = 1.6 / m0;
+  float h  = surface(st, t, m, uPress, uVel);
+  float hx = surface(st + vec2(e, 0.0), t, m, uPress, uVel);
+  float hy = surface(st + vec2(0.0, e), t, m, uPress, uVel);
 
-  vec2 q = vec2(fbm(st * 1.5 + vec2(0.0, t) + swirl * 0.2),
-                fbm(st * 1.5 + vec2(5.2, 1.3) - t * 0.8 + swirl * 0.2));
+  // surface normal from the height gradient
+  vec3 n = normalize(vec3(-(hx - h) / e, -(hy - h) / e, 12.0));
 
-  vec2 r2 = vec2(fbm(st * 1.85 + 3.8 * q + vec2(1.7, 9.2) + t * 1.2 + swirl * 0.6),
-                 fbm(st * 1.85 + 3.8 * q + vec2(8.3, 2.8) - t * 0.9 + swirl * 0.6));
+  vec3 lightDir = normalize(vec3(-0.45, 0.75, 0.62));
+  float diff = clamp(dot(n, lightDir), 0.0, 1.0);
+  float spec = pow(clamp(dot(reflect(-lightDir, n), vec3(0.0, 0.0, 1.0)), 0.0, 1.0), 42.0);
+  float fres = pow(1.0 - clamp(n.z, 0.0, 1.0), 2.0);
 
-  float f = fbm(st * 1.35 + 3.4 * r2 + pull * 0.5) + ripple * 0.2;
-
-  float pulse = 0.5 + 0.5 * sin(uTime * 0.35);
-
-  // light palette — graphite paper: visible steps, no white-on-white
-  vec3 lBase = vec3(0.945, 0.943, 0.938);
-  vec3 lMid  = vec3(0.862, 0.858, 0.852);
-  vec3 lEdge = vec3(0.735, 0.731, 0.726);
-  vec3 lVein = vec3(0.055, 0.055, 0.055);
-
-  // dark palette — true black with hot gold veins
-  vec3 dBase = vec3(0.035, 0.033, 0.031);
-  vec3 dMid  = vec3(0.085, 0.080, 0.072);
-  vec3 dEdge = vec3(0.152, 0.140, 0.118);
-  vec3 dVein = vec3(0.980, 0.760, 0.320);
-
-  vec3 base = mix(lBase, dBase, uDark);
-  vec3 mid  = mix(lMid,  dMid,  uDark);
-  vec3 edge = mix(lEdge, dEdge, uDark);
-  vec3 vein = mix(lVein, dVein, uDark);
-
-  float band = smoothstep(-0.34, 0.52, f);
-  vec3 col = mix(base, mid, smoothstep(0.06, 0.94, band));
-  col = mix(col, edge, smoothstep(0.50, 1.0, band) * 1.0);
-
+  // caustics — light focusing through the surface, the detail that reads "water"
+  float curve = (hx + hy - 2.0 * h) / (e * e);
+  float caustic = pow(clamp(1.0 - abs(curve) * 0.0016, 0.0, 1.0), 22.0);
   ${
     rich
-      ? `
-  float veinMask = smoothstep(0.026, 0.0, abs(f - 0.16));
-  col = mix(col, vein, veinMask * mix(0.22, 0.42, uDark) * (0.75 + 0.25 * pulse));
-  float veinMask2 = smoothstep(0.016, 0.0, abs(f + 0.10));
-  col = mix(col, vein, veinMask2 * mix(0.12, 0.26, uDark) * (0.85 + 0.15 * (1.0 - pulse)));
-  float veinMask3 = smoothstep(0.010, 0.0, abs(f - 0.34));
-  col = mix(col, vein, veinMask3 * mix(0.08, 0.20, uDark));
-  `
-      : `
-  float veinMaskS = smoothstep(0.018, 0.0, abs(f - 0.16));
-  col = mix(col, vein, veinMaskS * mix(0.14, 0.30, uDark));
-  `
+      ? `float caustic2 = pow(abs(sin(h * 3.1 + t * 0.6)), 26.0);
+  caustic = caustic * 0.75 + caustic2 * 0.55;`
+      : ``
   }
-  col = mix(col, vein, clamp(pull, 0.0, 1.0) * mix(0.09, 0.18, uDark));
 
-  float vig = smoothstep(1.15, 0.25, length(uv - 0.5) * 1.4);
-  col *= mix(mix(0.90, 1.0, vig), mix(0.62, 1.10, vig), uDark);
+  float depth = smoothstep(-1.6, 1.9, h);
+
+  // --- palettes -------------------------------------------------------------
+  // light: white paper seen through shallow water, graphite shadows
+  vec3 lDeep  = vec3(0.622, 0.622, 0.630);
+  vec3 lShall = vec3(0.945, 0.943, 0.938);
+  vec3 lLight = vec3(0.180, 0.180, 0.182);
+
+  // dark: black water with hot gold light
+  vec3 dDeep  = vec3(0.020, 0.019, 0.018);
+  vec3 dShall = vec3(0.120, 0.108, 0.086);
+  vec3 dLight = vec3(1.000, 0.780, 0.330);
+
+  vec3 deep  = mix(lDeep,  dDeep,  uDark);
+  vec3 shall = mix(lShall, dShall, uDark);
+  vec3 glow  = mix(lLight, dLight, uDark);
+
+  vec3 col = mix(deep, shall, depth);
+  col = mix(col, shall, diff * mix(0.30, 0.22, uDark));
+
+  // caustic lines: dark graphite streaks on paper, gold filaments in the dark
+  col = mix(col, glow, caustic * mix(0.34, 0.62, uDark));
+
+  // rim + specular
+  col += glow * fres * mix(0.06, 0.18, uDark);
+  col += glow * spec * mix(0.35, 0.95, uDark);
+
+  float vig = smoothstep(1.20, 0.28, length(uv - 0.5) * 1.4);
+  col *= mix(mix(0.88, 1.02, vig), mix(0.55, 1.12, vig), uDark);
 
   gl_FragColor = vec4(col, 1.0);
 }
@@ -173,8 +188,9 @@ export function LiquidBackground() {
       (canvas.getContext("experimental-webgl") as WebGLRenderingContext | null);
     if (!gl) return;
 
+    // octaves double as the wave count for the water bank
     const vs = compile(gl, gl.VERTEX_SHADER, VERT);
-    const fs = compile(gl, gl.FRAGMENT_SHADER, frag(settings.octaves, settings.rich));
+    const fs = compile(gl, gl.FRAGMENT_SHADER, frag(settings.octaves + 2, settings.rich));
     if (!vs || !fs) return;
 
     const prog = gl.createProgram();
@@ -206,7 +222,6 @@ export function LiquidBackground() {
       typeof window !== "undefined" && window.matchMedia("(pointer: coarse)").matches;
     const dprCap = coarse ? Math.min(1, settings.maxDpr) : settings.maxDpr;
     const dpr = () => Math.min(window.devicePixelRatio || 1, dprCap) * settings.scale;
-
 
     let w = 1;
     let h = 1;
@@ -242,7 +257,7 @@ export function LiquidBackground() {
     type Ripple = { x: number; y: number; born: number };
     const ripples: Ripple[] = [];
     const rippleData = new Float32Array(MAX_RIPPLES * 3);
-    const RIPPLE_LIFE = 1100;
+    const RIPPLE_LIFE = 1600;
     let lastRipple = 0;
 
     const toCanvas = (cx: number, cy: number) => {
@@ -260,7 +275,7 @@ export function LiquidBackground() {
     const addRipple = (cx: number, cy: number) => {
       // Rate-limited: hammering the screen must never queue extra work.
       const now = performance.now();
-      if (now - lastRipple < 220) return;
+      if (now - lastRipple < 200) return;
       lastRipple = now;
       const m0 = Math.min(w, h);
       const p = toCanvas(cx, cy);
@@ -271,7 +286,6 @@ export function LiquidBackground() {
       });
       if (ripples.length > MAX_RIPPLES) ripples.shift();
     };
-
 
     const onPointerMove = (e: PointerEvent) => setTarget(e.clientX, e.clientY);
     const onPointerDown = (e: PointerEvent) => {
@@ -333,9 +347,9 @@ export function LiquidBackground() {
 
       const time = (now - start) / 1000;
 
-      // inertia — the fluid drifts slowly toward the pointer, no whiplash
-      mx += (tx - mx) * 0.05;
-      my += (ty - my) * 0.05;
+      // inertia — the water drifts slowly toward the pointer, no whiplash
+      mx += (tx - mx) * 0.06;
+      my += (ty - my) * 0.06;
       const m0 = Math.min(w, h);
       const dx = (mx - lastX) / m0;
       const dy = (my - lastY) / m0;
@@ -453,7 +467,6 @@ export function LiquidBackground() {
       gl.deleteShader(fs);
       gl.deleteBuffer(buf);
     };
-
   }, []);
 
   return (

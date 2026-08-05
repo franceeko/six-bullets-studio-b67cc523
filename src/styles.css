@@ -523,3 +523,118 @@
 @media (prefers-reduced-motion: reduce) {
   .fade-up { animation: none !important; opacity: 1 !important; }
 }
+
+/* ---------------------------------------------------------------------------
+   The Altar — team formation
+--------------------------------------------------------------------------- */
+.altar {
+  perspective: 1200px;
+}
+
+.altar-niche {
+  transition: opacity 500ms ease, filter 500ms ease;
+}
+.altar:hover .altar-niche {
+  opacity: 0.38;
+  filter: saturate(0.5);
+}
+.altar .altar-niche:hover {
+  opacity: 1;
+  filter: none;
+}
+
+/* Lit arch frame where the R6 rig / photo stands */
+.altar-frame {
+  aspect-ratio: 3 / 4;
+  border-radius: 999px 999px 14px 14px;
+  background:
+    linear-gradient(180deg,
+      color-mix(in oklab, var(--paper) 70%, transparent),
+      color-mix(in oklab, var(--cream) 85%, transparent));
+  border: 1px solid color-mix(in oklab, var(--ink) 28%, transparent);
+  box-shadow:
+    inset 0 -40px 60px -40px color-mix(in oklab, var(--wine) 55%, transparent),
+    0 26px 48px -34px color-mix(in oklab, var(--ink) 60%, transparent);
+  transition: transform 600ms cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 600ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.altar-niche:hover .altar-frame {
+  transform: translateY(-10px);
+  box-shadow:
+    inset 0 -50px 70px -40px color-mix(in oklab, var(--wine) 75%, transparent),
+    0 34px 56px -30px color-mix(in oklab, var(--ink) 70%, transparent);
+}
+
+/* Uplight pooling at the base of each niche */
+.altar-glow {
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 55%;
+  pointer-events: none;
+  background: linear-gradient(
+    to top,
+    color-mix(in oklab, var(--wine) 42%, transparent),
+    transparent 85%
+  );
+  opacity: 0.55;
+  transition: opacity 600ms ease;
+}
+.altar-niche:hover .altar-glow {
+  opacity: 0.85;
+}
+
+/* Slow light sweep across the frame on hover */
+.altar-sweep {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    115deg,
+    transparent 35%,
+    color-mix(in oklab, var(--cream) 65%, transparent) 50%,
+    transparent 65%
+  );
+  transform: translateX(-120%);
+  opacity: 0;
+  transition: transform 900ms cubic-bezier(0.16, 1, 0.3, 1), opacity 300ms ease;
+}
+.altar-niche:hover .altar-sweep {
+  transform: translateX(120%);
+  opacity: 1;
+}
+
+/* Low fog crossing the altar */
+.altar-fog {
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 45%;
+  pointer-events: none;
+  z-index: 1;
+  background:
+    radial-gradient(60% 90% at 20% 100%, color-mix(in oklab, var(--cream) 60%, transparent), transparent 70%),
+    radial-gradient(70% 90% at 75% 100%, color-mix(in oklab, var(--cream) 45%, transparent), transparent 70%);
+  animation: altar-fog-drift 22s ease-in-out infinite alternate;
+}
+
+@keyframes altar-fog-drift {
+  from { transform: translateX(-4%) scaleY(1); }
+  to   { transform: translateX(4%) scaleY(1.12); }
+}
+
+/* Stone line the crew stands on */
+.altar-floor {
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    color-mix(in oklab, var(--ink) 45%, transparent) 20%,
+    color-mix(in oklab, var(--ink) 45%, transparent) 80%,
+    transparent
+  );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .altar-fog { animation: none !important; }
+}
