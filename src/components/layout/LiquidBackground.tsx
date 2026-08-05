@@ -124,8 +124,8 @@ void main() {
 
   // --- palettes -------------------------------------------------------------
   // light: white paper seen through shallow water, graphite shadows
-  vec3 lDeep  = vec3(0.706, 0.706, 0.712);
-  vec3 lShall = vec3(0.960, 0.958, 0.955);
+  vec3 lDeep  = vec3(0.622, 0.622, 0.630);
+  vec3 lShall = vec3(0.945, 0.943, 0.938);
   vec3 lLight = vec3(0.180, 0.180, 0.182);
 
   // dark: black water with hot gold light
