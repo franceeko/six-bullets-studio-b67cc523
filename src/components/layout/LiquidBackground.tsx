@@ -44,7 +44,8 @@ const waveBank = (count: number) =>
     })
     .join("\n");
 
-const frag = (waves: number, rich: boolean) => `
+/** exported so the GLSL can be compile-tested outside the browser harness */
+export const frag = (waves: number, rich: boolean) => `
 precision mediump float;
 
 uniform vec2  uRes;
