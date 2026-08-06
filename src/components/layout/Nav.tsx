@@ -24,13 +24,16 @@ export function Nav() {
         className="fixed inset-x-0 top-0 z-[60] border-b border-ink/10 bg-cream/80 backdrop-blur-md"
       >
         <nav className="mx-auto grid h-16 max-w-[1500px] grid-cols-[minmax(0,1fr)_auto] items-center gap-4 px-6 md:grid-cols-[1fr_auto_1fr] lg:px-12">
-          <a href="#top" className="flex min-w-0 items-baseline gap-2">
+          {/* overflow-hidden + fixed leading: the script glyphs used to spill
+              out of the bar and jitter when the pointer swept past them. */}
+          <a href="#top" className="flex min-w-0 items-baseline gap-2 overflow-hidden">
             <span
-              className="inline-block truncate text-3xl leading-none text-ink transition-colors hover:text-wine"
+              className="inline-block max-w-full truncate py-1 text-3xl leading-[1.2] text-ink transition-colors hover:text-wine"
               style={{ fontFamily: "var(--font-script)" }}
             >
               six bullets
             </span>
+
             <span className="hidden font-mono text-[10px] uppercase tracking-[0.24em] text-ink/65 lg:inline">
               / 6B
             </span>
