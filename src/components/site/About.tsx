@@ -1,12 +1,15 @@
 import { motion } from "framer-motion";
 import { SectionHeader } from "./SectionHeader";
 
+// Stat cards follow the main palette (ink / paper) instead of pastel blocks,
+// so they stay legible in both themes and at low screen brightness.
 const stats = [
-  { value: "14", label: "Crew", color: "bg-butter" },
-  { value: "01", label: "Project", color: "bg-wine-soft" },
-  { value: "—", label: "CCU", color: "bg-sage" },
-  { value: "—", label: "Visits", color: "bg-blush" },
+  { value: "14", label: "Crew", tone: "solid" },
+  { value: "01", label: "Project", tone: "outline" },
+  { value: "—", label: "CCU", tone: "outline" },
+  { value: "—", label: "Visits", tone: "solid" },
 ];
+
 
 export function About() {
   return (
