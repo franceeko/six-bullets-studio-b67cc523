@@ -21,7 +21,9 @@ A logo/letra inicial da topbar se desloca com o mouse sem limite, então em movi
 
 ## 4. Animação de entrada / reload
 
-Uma abertura curta (~1,1s, uma vez por carregamento): tela na cor do tema com "6B" no centro, uma linha que preenche, e então a cortina sobe revelando o hero já com a animação das letras encadeada. Respeita `prefers-reduced-motion` (nesse caso só um fade rápido).
+Uma abertura de **2,5s** (uma vez por carregamento): tela na cor do tema, "SIX BULLETS" aparecendo letra a letra com uma linha de progresso embaixo, pausa curta e a cortina sobe revelando o hero já com a animação das letras encadeada.
+
+Para não perder a animação enquanto o site ainda carrega: a cortina é renderizada já no HTML inicial (aparece antes do React hidratar) e só sai quando **duas** condições baterem — as fontes/imagens do hero prontas (`document.fonts.ready` + `window.load`) **e** o tempo mínimo de 2,5s cumprido. Se o carregamento demorar mais, a barra de progresso continua até terminar (teto de 6s para nunca travar). Respeita `prefers-reduced-motion` (fade rápido).
 
 ## 5. Cores das infos do studio
 
