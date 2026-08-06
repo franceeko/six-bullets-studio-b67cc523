@@ -517,6 +517,9 @@ export function LiquidBackground() {
       window.removeEventListener("touchmove", onTouchMove);
       window.removeEventListener("touchend", onRelease);
       window.removeEventListener("pointerleave", onRelease);
+      document.removeEventListener("pointerout", onPointerOut);
+      document.removeEventListener("mouseleave", recenter);
+      window.removeEventListener("scroll", onScroll);
       document.removeEventListener("visibilitychange", onVisibility);
       window.removeEventListener("pagehide", pause);
       window.removeEventListener("blur", pause);
@@ -530,7 +533,8 @@ export function LiquidBackground() {
       gl.deleteShader(fs);
       gl.deleteBuffer(buf);
     };
-  }, []);
+  }, [gen]);
+
 
   return (
     <div aria-hidden className="liquid-bg">
