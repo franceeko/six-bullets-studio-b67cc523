@@ -448,7 +448,9 @@ export function LiquidBackground() {
         if (fps < settings.fps * 0.6) {
           strikes++;
           if (strikes >= 2) {
-            const next = downgrade(tier);
+            // never fall below "eco": lower tiers look like broken pixels
+            const next = downgrade(tier, "eco");
+
             if (next !== tier) {
               tier = next;
               settings = PERF_SETTINGS[tier];
