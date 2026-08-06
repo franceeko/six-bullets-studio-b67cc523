@@ -66,13 +66,15 @@ ${waveBank(waves)}
 }
 
 float surface(vec2 p, float t, vec2 m, float press, float vel) {
-  // slow lateral drift keeps the sheet alive without the pointer
-  vec2 q = p + vec2(t * 0.012, t * 0.006);
+  // slow lateral drift keeps the sheet alive without the pointer;
+  // uScroll keeps the field moving as the visitor goes down the page so the
+  // lower sections never sit on a flat, dead patch of water.
+  vec2 q = p + vec2(t * 0.012 + uScroll * 0.18, t * 0.006 + uScroll);
 
   // gentle swell around the pointer — a wide, soft bulge, never a yank
   vec2 d = q - m;
   float dist = length(d);
-  float swell = exp(-dist * 2.2) * (0.10 + press * 0.16 + vel * 0.26);
+  float swell = exp(-dist * 2.2) * (0.080 + press * 0.128 + vel * 0.208);
   q -= normalize(d + 0.0001) * swell * 0.35;
 
   float h = waveField(q, t);
@@ -84,9 +86,10 @@ float surface(vec2 p, float t, vec2 m, float press, float vel) {
       float age = 1.0 - r.z;
       float rl = length(q - r.xy);
       float front = rl - age * 0.85;
-      h += 0.55 * r.z * sin(front * 26.0) * exp(-abs(front) * 9.0) * exp(-rl * 1.4);
+      h += 0.44 * r.z * sin(front * 26.0) * exp(-abs(front) * 9.0) * exp(-rl * 1.4);
     }
   }
+
 
   return h;
 }
