@@ -27,11 +27,15 @@ export type PerfSettings = {
 export const PERF_SETTINGS: Record<PerfTier, PerfSettings> = {
   ultra: { octaves: 6, maxDpr: 2, scale: 0.9, fps: 60, rich: true },
   high: { octaves: 5, maxDpr: 1.5, scale: 0.75, fps: 60, rich: true },
-  balanced: { octaves: 4, maxDpr: 1.25, scale: 0.6, fps: 45, rich: true },
-  eco: { octaves: 3, maxDpr: 1, scale: 0.5, fps: 30, rich: false },
-  minimal: { octaves: 2, maxDpr: 1, scale: 0.34, fps: 20, rich: false },
+  balanced: { octaves: 4, maxDpr: 1.25, scale: 0.65, fps: 45, rich: true },
+  // Phones: resolution costs less than wave count / framerate, and a blurry
+  // upscaled canvas is the thing visitors actually notice. Keep the pixels,
+  // pay for them with fewer waves and a lower fps.
+  eco: { octaves: 3, maxDpr: 1, scale: 0.7, fps: 30, rich: false },
+  minimal: { octaves: 2, maxDpr: 1, scale: 0.55, fps: 24, rich: false },
   static: { octaves: 0, maxDpr: 1, scale: 0, fps: 0, rich: false },
 };
+
 
 /** Ordered from cheapest to most expensive — used when stepping down. */
 export const TIER_ORDER: PerfTier[] = ["static", "minimal", "eco", "balanced", "high", "ultra"];
