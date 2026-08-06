@@ -412,6 +412,8 @@ export function LiquidBackground() {
       press += (targetPress - press) * 0.05;
 
       dark += (targetDark - dark) * 0.08;
+      scroll += (targetScroll - scroll) * 0.05;
+
 
       rippleData.fill(0);
       for (let i = ripples.length - 1; i >= 0; i--) {
