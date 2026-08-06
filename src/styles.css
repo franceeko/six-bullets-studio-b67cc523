@@ -638,3 +638,155 @@
 @media (prefers-reduced-motion: reduce) {
   .altar-fog { animation: none !important; }
 }
+
+/* ---------------------------------------------------------------------------
+   Altar horizon — silhouette backdrop behind the crew formation (desktop)
+--------------------------------------------------------------------------- */
+.altar-horizon {
+  position: absolute;
+  inset: -6% -6% 0 -6%;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  border-radius: 24px;
+  background:
+    radial-gradient(90% 70% at 50% 82%, color-mix(in oklab, var(--wine) 22%, transparent), transparent 70%),
+    linear-gradient(180deg,
+      color-mix(in oklab, var(--ink) 10%, transparent),
+      color-mix(in oklab, var(--ink) 3%, transparent) 55%,
+      transparent);
+  opacity: 0.85;
+}
+
+.altar-moon {
+  position: absolute;
+  left: 50%;
+  top: 8%;
+  width: min(38vw, 420px);
+  aspect-ratio: 1;
+  transform: translateX(-50%);
+  border-radius: 999px;
+  background: radial-gradient(
+    circle at 50% 50%,
+    color-mix(in oklab, var(--wine) 55%, transparent),
+    color-mix(in oklab, var(--wine) 22%, transparent) 58%,
+    transparent 72%
+  );
+  animation: altar-moon-breathe 14s ease-in-out infinite alternate;
+}
+
+@keyframes altar-moon-breathe {
+  from { transform: translateX(-50%) scale(1); opacity: 0.85; }
+  to   { transform: translateX(-50%) scale(1.06); opacity: 1; }
+}
+
+.altar-ridge {
+  position: absolute;
+  inset: auto 0 0 0;
+  pointer-events: none;
+  background: color-mix(in oklab, var(--ink) 82%, transparent);
+}
+.altar-ridge-far {
+  height: 22%;
+  opacity: 0.16;
+  clip-path: polygon(0 100%, 0 62%, 12% 40%, 24% 66%, 38% 30%, 52% 58%, 66% 26%, 80% 56%, 92% 36%, 100% 60%, 100% 100%);
+}
+.altar-ridge-near {
+  height: 14%;
+  opacity: 0.28;
+  clip-path: polygon(0 100%, 0 70%, 16% 44%, 30% 72%, 46% 38%, 60% 68%, 74% 40%, 88% 70%, 100% 50%, 100% 100%);
+}
+
+/* ---------------------------------------------------------------------------
+   Crew cards — mobile crew list
+--------------------------------------------------------------------------- */
+.crew-card {
+  border: 1px solid color-mix(in oklab, var(--ink) 18%, transparent);
+  border-radius: 16px;
+  background: color-mix(in oklab, var(--paper) 72%, transparent);
+  backdrop-filter: blur(2px);
+}
+.crew-card-glow {
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 45%;
+  pointer-events: none;
+  background: linear-gradient(to top, color-mix(in oklab, var(--wine) 30%, transparent), transparent);
+  opacity: 0.5;
+}
+
+/* ---------------------------------------------------------------------------
+   Studio stat cards
+--------------------------------------------------------------------------- */
+.stat-card {
+  border: 1px solid color-mix(in oklab, var(--ink) 20%, transparent);
+  transition: transform 500ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 500ms ease;
+  box-shadow: 0 20px 40px -26px color-mix(in oklab, var(--ink) 60%, transparent);
+}
+.stat-card-solid {
+  background: var(--ink);
+  color: var(--paper);
+  border-color: transparent;
+}
+.stat-card-outline {
+  background: color-mix(in oklab, var(--paper) 70%, transparent);
+  color: var(--ink);
+}
+
+/* ---------------------------------------------------------------------------
+   Entry curtain
+--------------------------------------------------------------------------- */
+.intro-curtain {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  background: var(--cream);
+  transition: opacity 700ms ease, transform 700ms cubic-bezier(0.76, 0, 0.24, 1);
+}
+.intro-curtain-out {
+  opacity: 0;
+  transform: translateY(-6%);
+  pointer-events: none;
+}
+
+.intro-word {
+  display: flex;
+  font-family: var(--font-display);
+  font-size: clamp(2.4rem, 9vw, 7rem);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  overflow: hidden;
+}
+.intro-letter {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(120%);
+  animation: intro-letter-in 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes intro-letter-in {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.intro-rule {
+  display: block;
+  height: 1px;
+  width: min(46vw, 420px);
+  background: color-mix(in oklab, var(--ink) 45%, transparent);
+  transform-origin: left;
+  animation: intro-rule-in 1.4s 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transform: scaleX(0);
+}
+@keyframes intro-rule-in {
+  to { transform: scaleX(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .intro-curtain { display: none; }
+  .altar-moon { animation: none !important; }
+}
