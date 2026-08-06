@@ -224,6 +224,8 @@ export function LiquidBackground() {
     const uVel = gl.getUniformLocation(prog, "uVel");
     const uDark = gl.getUniformLocation(prog, "uDark");
     const uRipples = gl.getUniformLocation(prog, "uRipples");
+    const uScroll = gl.getUniformLocation(prog, "uScroll");
+
 
     // Touch devices never go above dpr 1 — the extra pixels are the main
     // cause of GPU memory pressure (and lost contexts) on phones.
