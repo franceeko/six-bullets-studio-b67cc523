@@ -277,10 +277,23 @@ export function LiquidBackground() {
     };
 
     const setTarget = (cx: number, cy: number) => {
-      const p = toCanvas(cx, cy);
+      // Clamp to the viewport: a pointer that leaves the window (or a stray
+      // event with a wild coordinate) used to park the swell far outside the
+      // field, which froze the surface into a flat smear.
+      if (!Number.isFinite(cx) || !Number.isFinite(cy)) return;
+      const vx = Math.min(Math.max(cx, 0), window.innerWidth);
+      const vy = Math.min(Math.max(cy, 0), window.innerHeight);
+      const p = toCanvas(vx, vy);
       tx = p.x;
       ty = p.y;
       targetPress = 1;
+    };
+
+    /** Pointer gone (left the window / alt-tab): drift back to the middle. */
+    const recenter = () => {
+      tx = w / 2;
+      ty = h / 2;
+      targetPress = 0;
     };
 
     const addRipple = (cx: number, cy: number) => {
@@ -289,7 +302,9 @@ export function LiquidBackground() {
       if (now - lastRipple < 200) return;
       lastRipple = now;
       const m0 = Math.min(w, h);
-      const p = toCanvas(cx, cy);
+      const vx = Math.min(Math.max(cx, 0), window.innerWidth);
+      const vy = Math.min(Math.max(cy, 0), window.innerHeight);
+      const p = toCanvas(vx, vy);
       ripples.push({
         x: (p.x - w / 2) / m0,
         y: (p.y - h / 2) / m0,
@@ -298,24 +313,39 @@ export function LiquidBackground() {
       if (ripples.length > MAX_RIPPLES) ripples.shift();
     };
 
-    const onPointerMove = (e: PointerEvent) => setTarget(e.clientX, e.clientY);
+    // forward declarations — resume() is defined with the loop below
+    let wake = () => {};
+
+    const onPointerMove = (e: PointerEvent) => {
+      wake();
+      setTarget(e.clientX, e.clientY);
+    };
     const onPointerDown = (e: PointerEvent) => {
+      wake();
       setTarget(e.clientX, e.clientY);
       addRipple(e.clientX, e.clientY);
     };
     const onTouchMove = (e: TouchEvent) => {
       const t = e.touches[0];
-      if (t) setTarget(t.clientX, t.clientY);
+      if (t) {
+        wake();
+        setTarget(t.clientX, t.clientY);
+      }
     };
     const onTouchStart = (e: TouchEvent) => {
       const t = e.touches[0];
       if (t) {
+        wake();
         setTarget(t.clientX, t.clientY);
         addRipple(t.clientX, t.clientY);
       }
     };
     const onRelease = () => {
       targetPress = 0;
+    };
+    const onPointerOut = (e: PointerEvent) => {
+      // relatedTarget null == the pointer actually left the window
+      if (!e.relatedTarget) recenter();
     };
 
     window.addEventListener("pointermove", onPointerMove, { passive: true });
@@ -324,8 +354,19 @@ export function LiquidBackground() {
     window.addEventListener("touchmove", onTouchMove, { passive: true });
     window.addEventListener("touchend", onRelease, { passive: true });
     window.addEventListener("pointerleave", onRelease);
+    document.addEventListener("pointerout", onPointerOut);
+    document.addEventListener("mouseleave", recenter);
 
-    // --- theme ------------------------------------------------------------
+    // --- scroll ------------------------------------------------------------
+    let targetScroll = 0;
+    let scroll = 0;
+    const onScroll = () => {
+      targetScroll = (window.scrollY || 0) / Math.max(1, window.innerHeight);
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+
+
     let targetDark = document.documentElement.classList.contains("dark") ? 1 : 0;
     let dark = targetDark;
     const themeObserver = new MutationObserver(() => {
