@@ -435,6 +435,8 @@ export function LiquidBackground() {
       gl.uniform1f(uVel, vel);
       gl.uniform1f(uDark, dark);
       gl.uniform3fv(uRipples, rippleData);
+      gl.uniform1f(uScroll, scroll * 0.35);
+
       gl.drawArrays(gl.TRIANGLES, 0, 3);
 
       // watchdog
