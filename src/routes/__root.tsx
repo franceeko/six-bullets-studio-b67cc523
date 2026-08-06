@@ -134,7 +134,9 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
         {/* Liquid background + custom cursor live at the root so every route gets them. */}
+        <Intro />
         <LiquidBackground />
+
         <Cursor />
         {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
         <Outlet />
