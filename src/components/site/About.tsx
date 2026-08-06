@@ -1,12 +1,15 @@
 import { motion } from "framer-motion";
 import { SectionHeader } from "./SectionHeader";
 
+// Stat cards follow the main palette (ink / paper) instead of pastel blocks,
+// so they stay legible in both themes and at low screen brightness.
 const stats = [
-  { value: "14", label: "Crew", color: "bg-butter" },
-  { value: "01", label: "Project", color: "bg-wine-soft" },
-  { value: "—", label: "CCU", color: "bg-sage" },
-  { value: "—", label: "Visits", color: "bg-blush" },
+  { value: "14", label: "Crew", tone: "solid" },
+  { value: "01", label: "Project", tone: "outline" },
+  { value: "—", label: "CCU", tone: "outline" },
+  { value: "—", label: "Visits", tone: "solid" },
 ];
+
 
 export function About() {
   return (
@@ -39,17 +42,15 @@ export function About() {
                 whileHover={{ y: -6, rotate: i % 2 ? 1.5 : -1.5 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.08, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-                className={`${s.color} rounded-2xl p-5 md:p-6 border border-ink/10 gpu`}
-                style={{
-                  boxShadow: "0 20px 40px -22px oklch(0 0 0 / 0.35), 0 1px 0 oklch(1 0 0 / 0.8) inset",
-                }}
+                className={`stat-card stat-card-${s.tone} rounded-2xl p-5 md:p-6 gpu`}
               >
-                <div className="font-display italic text-6xl md:text-7xl text-ink leading-none">
+                <div className="font-display italic text-6xl md:text-7xl leading-none">
                   {s.value}
                 </div>
-                <div className="mt-3 font-mono text-[10px] uppercase tracking-[0.22em] text-ink/70">
+                <div className="mt-3 font-mono text-[10px] uppercase tracking-[0.22em] opacity-70">
                   {s.label}
                 </div>
+
               </motion.div>
             ))}
           </div>

@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { detectPerfTier, PERF_SETTINGS, downgrade, type PerfTier } from "@/hooks/usePerfProfile";
 
@@ -54,6 +54,8 @@ uniform vec2  uMouse;
 uniform float uPress;
 uniform float uVel;
 uniform float uDark;
+uniform float uScroll;
+
 uniform vec3  uRipples[${MAX_RIPPLES}];
 
 // ---- surface height -------------------------------------------------------
@@ -64,13 +66,15 @@ ${waveBank(waves)}
 }
 
 float surface(vec2 p, float t, vec2 m, float press, float vel) {
-  // slow lateral drift keeps the sheet alive without the pointer
-  vec2 q = p + vec2(t * 0.012, t * 0.006);
+  // slow lateral drift keeps the sheet alive without the pointer;
+  // uScroll keeps the field moving as the visitor goes down the page so the
+  // lower sections never sit on a flat, dead patch of water.
+  vec2 q = p + vec2(t * 0.012 + uScroll * 0.18, t * 0.006 + uScroll);
 
   // gentle swell around the pointer — a wide, soft bulge, never a yank
   vec2 d = q - m;
   float dist = length(d);
-  float swell = exp(-dist * 2.2) * (0.10 + press * 0.16 + vel * 0.26);
+  float swell = exp(-dist * 2.2) * (0.080 + press * 0.128 + vel * 0.208);
   q -= normalize(d + 0.0001) * swell * 0.35;
 
   float h = waveField(q, t);
@@ -82,9 +86,10 @@ float surface(vec2 p, float t, vec2 m, float press, float vel) {
       float age = 1.0 - r.z;
       float rl = length(q - r.xy);
       float front = rl - age * 0.85;
-      h += 0.55 * r.z * sin(front * 26.0) * exp(-abs(front) * 9.0) * exp(-rl * 1.4);
+      h += 0.44 * r.z * sin(front * 26.0) * exp(-abs(front) * 9.0) * exp(-rl * 1.4);
     }
   }
+
 
   return h;
 }
@@ -168,10 +173,14 @@ function compile(gl: WebGLRenderingContext, type: number, src: string): WebGLSha
 
 export function LiquidBackground() {
   const ref = useRef<HTMLCanvasElement>(null);
+  // Bumped when the GPU context is restored — remounts the whole GL setup
+  // (shader, program, buffers, uniforms) instead of just showing the canvas.
+  const [gen, setGen] = useState(0);
 
   useEffect(() => {
     const canvas = ref.current;
     if (!canvas) return;
+
 
     let tier: PerfTier = detectPerfTier();
     if (tier === "static") return; // CSS gradient only — zero GPU cost
@@ -215,6 +224,8 @@ export function LiquidBackground() {
     const uVel = gl.getUniformLocation(prog, "uVel");
     const uDark = gl.getUniformLocation(prog, "uDark");
     const uRipples = gl.getUniformLocation(prog, "uRipples");
+    const uScroll = gl.getUniformLocation(prog, "uScroll");
+
 
     // Touch devices never go above dpr 1 — the extra pixels are the main
     // cause of GPU memory pressure (and lost contexts) on phones.
@@ -266,10 +277,23 @@ export function LiquidBackground() {
     };
 
     const setTarget = (cx: number, cy: number) => {
-      const p = toCanvas(cx, cy);
+      // Clamp to the viewport: a pointer that leaves the window (or a stray
+      // event with a wild coordinate) used to park the swell far outside the
+      // field, which froze the surface into a flat smear.
+      if (!Number.isFinite(cx) || !Number.isFinite(cy)) return;
+      const vx = Math.min(Math.max(cx, 0), window.innerWidth);
+      const vy = Math.min(Math.max(cy, 0), window.innerHeight);
+      const p = toCanvas(vx, vy);
       tx = p.x;
       ty = p.y;
       targetPress = 1;
+    };
+
+    /** Pointer gone (left the window / alt-tab): drift back to the middle. */
+    const recenter = () => {
+      tx = w / 2;
+      ty = h / 2;
+      targetPress = 0;
     };
 
     const addRipple = (cx: number, cy: number) => {
@@ -278,7 +302,9 @@ export function LiquidBackground() {
       if (now - lastRipple < 200) return;
       lastRipple = now;
       const m0 = Math.min(w, h);
-      const p = toCanvas(cx, cy);
+      const vx = Math.min(Math.max(cx, 0), window.innerWidth);
+      const vy = Math.min(Math.max(cy, 0), window.innerHeight);
+      const p = toCanvas(vx, vy);
       ripples.push({
         x: (p.x - w / 2) / m0,
         y: (p.y - h / 2) / m0,
@@ -287,24 +313,39 @@ export function LiquidBackground() {
       if (ripples.length > MAX_RIPPLES) ripples.shift();
     };
 
-    const onPointerMove = (e: PointerEvent) => setTarget(e.clientX, e.clientY);
+    // forward declarations — resume() is defined with the loop below
+    let wake = () => {};
+
+    const onPointerMove = (e: PointerEvent) => {
+      wake();
+      setTarget(e.clientX, e.clientY);
+    };
     const onPointerDown = (e: PointerEvent) => {
+      wake();
       setTarget(e.clientX, e.clientY);
       addRipple(e.clientX, e.clientY);
     };
     const onTouchMove = (e: TouchEvent) => {
       const t = e.touches[0];
-      if (t) setTarget(t.clientX, t.clientY);
+      if (t) {
+        wake();
+        setTarget(t.clientX, t.clientY);
+      }
     };
     const onTouchStart = (e: TouchEvent) => {
       const t = e.touches[0];
       if (t) {
+        wake();
         setTarget(t.clientX, t.clientY);
         addRipple(t.clientX, t.clientY);
       }
     };
     const onRelease = () => {
       targetPress = 0;
+    };
+    const onPointerOut = (e: PointerEvent) => {
+      // relatedTarget null == the pointer actually left the window
+      if (!e.relatedTarget) recenter();
     };
 
     window.addEventListener("pointermove", onPointerMove, { passive: true });
@@ -313,8 +354,19 @@ export function LiquidBackground() {
     window.addEventListener("touchmove", onTouchMove, { passive: true });
     window.addEventListener("touchend", onRelease, { passive: true });
     window.addEventListener("pointerleave", onRelease);
+    document.addEventListener("pointerout", onPointerOut);
+    document.addEventListener("mouseleave", recenter);
 
-    // --- theme ------------------------------------------------------------
+    // --- scroll ------------------------------------------------------------
+    let targetScroll = 0;
+    let scroll = 0;
+    const onScroll = () => {
+      targetScroll = (window.scrollY || 0) / Math.max(1, window.innerHeight);
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+
+
     let targetDark = document.documentElement.classList.contains("dark") ? 1 : 0;
     let dark = targetDark;
     const themeObserver = new MutationObserver(() => {
@@ -360,6 +412,8 @@ export function LiquidBackground() {
       press += (targetPress - press) * 0.05;
 
       dark += (targetDark - dark) * 0.08;
+      scroll += (targetScroll - scroll) * 0.05;
+
 
       rippleData.fill(0);
       for (let i = ripples.length - 1; i >= 0; i--) {
@@ -381,6 +435,8 @@ export function LiquidBackground() {
       gl.uniform1f(uVel, vel);
       gl.uniform1f(uDark, dark);
       gl.uniform3fv(uRipples, rippleData);
+      gl.uniform1f(uScroll, scroll * 0.35);
+
       gl.drawArrays(gl.TRIANGLES, 0, 3);
 
       // watchdog
@@ -392,7 +448,9 @@ export function LiquidBackground() {
         if (fps < settings.fps * 0.6) {
           strikes++;
           if (strikes >= 2) {
-            const next = downgrade(tier);
+            // never fall below "eco": lower tiers look like broken pixels
+            const next = downgrade(tier, "eco");
+
             if (next !== tier) {
               tier = next;
               settings = PERF_SETTINGS[tier];
@@ -414,13 +472,16 @@ export function LiquidBackground() {
       cancelAnimationFrame(raf);
     };
     const resume = () => {
-      if (running || lost) return;
+      if (running || lost || document.hidden) return;
       running = true;
       last = 0;
       windowStart = performance.now();
       frames = 0;
       raf = requestAnimationFrame(render);
     };
+    // any pointer activity also revives a loop that was paused by a lost
+    // focus event the browser never balanced with a focus event
+    wake = resume;
     const onVisibility = () => (document.hidden ? pause() : resume());
     document.addEventListener("visibilitychange", onVisibility);
     window.addEventListener("pagehide", pause);
@@ -438,10 +499,12 @@ export function LiquidBackground() {
     const onRestored = () => {
       lost = false;
       canvas.style.display = "";
-      // Rebuild happens on the next mount; keep the gradient until then.
+      // Full rebuild: the old program/buffers died with the context.
+      setGen((g) => g + 1);
     };
     canvas.addEventListener("webglcontextlost", onLost as EventListener, false);
     canvas.addEventListener("webglcontextrestored", onRestored, false);
+
 
     return () => {
       running = false;
@@ -454,6 +517,9 @@ export function LiquidBackground() {
       window.removeEventListener("touchmove", onTouchMove);
       window.removeEventListener("touchend", onRelease);
       window.removeEventListener("pointerleave", onRelease);
+      document.removeEventListener("pointerout", onPointerOut);
+      document.removeEventListener("mouseleave", recenter);
+      window.removeEventListener("scroll", onScroll);
       document.removeEventListener("visibilitychange", onVisibility);
       window.removeEventListener("pagehide", pause);
       window.removeEventListener("blur", pause);
@@ -467,7 +533,8 @@ export function LiquidBackground() {
       gl.deleteShader(fs);
       gl.deleteBuffer(buf);
     };
-  }, []);
+  }, [gen]);
+
 
   return (
     <div aria-hidden className="liquid-bg">
