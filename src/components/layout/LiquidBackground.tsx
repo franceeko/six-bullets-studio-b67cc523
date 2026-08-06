@@ -173,10 +173,14 @@ function compile(gl: WebGLRenderingContext, type: number, src: string): WebGLSha
 
 export function LiquidBackground() {
   const ref = useRef<HTMLCanvasElement>(null);
+  // Bumped when the GPU context is restored — remounts the whole GL setup
+  // (shader, program, buffers, uniforms) instead of just showing the canvas.
+  const [gen, setGen] = useState(0);
 
   useEffect(() => {
     const canvas = ref.current;
     if (!canvas) return;
+
 
     let tier: PerfTier = detectPerfTier();
     if (tier === "static") return; // CSS gradient only — zero GPU cost
