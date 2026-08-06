@@ -12,6 +12,8 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "@/styles.css?url";
 import { reportLovableError } from "@/lib/lovable-error-reporting";
 import { Cursor } from "@/components/layout/Cursor";
+import { Intro } from "@/components/layout/Intro";
+
 import { LiquidBackground } from "@/components/layout/LiquidBackground";
 import { ThemeProvider, THEME_INIT_SCRIPT } from "@/hooks/use-theme";
 
