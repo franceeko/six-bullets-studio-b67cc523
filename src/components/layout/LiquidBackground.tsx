@@ -54,6 +54,8 @@ uniform vec2  uMouse;
 uniform float uPress;
 uniform float uVel;
 uniform float uDark;
+uniform float uScroll;
+
 uniform vec3  uRipples[${MAX_RIPPLES}];
 
 // ---- surface height -------------------------------------------------------
