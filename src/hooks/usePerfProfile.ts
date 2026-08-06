@@ -40,10 +40,12 @@ export const PERF_SETTINGS: Record<PerfTier, PerfSettings> = {
 /** Ordered from cheapest to most expensive — used when stepping down. */
 export const TIER_ORDER: PerfTier[] = ["static", "minimal", "eco", "balanced", "high", "ultra"];
 
-export function downgrade(tier: PerfTier): PerfTier {
+export function downgrade(tier: PerfTier, floor: PerfTier = "static"): PerfTier {
   const i = TIER_ORDER.indexOf(tier);
-  return TIER_ORDER[Math.max(0, i - 1)] ?? "static";
+  const min = Math.max(0, TIER_ORDER.indexOf(floor));
+  return TIER_ORDER[Math.max(min, i - 1)] ?? floor;
 }
+
 
 type NavigatorSignals = Navigator & {
   deviceMemory?: number;
