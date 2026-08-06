@@ -472,13 +472,16 @@ export function LiquidBackground() {
       cancelAnimationFrame(raf);
     };
     const resume = () => {
-      if (running || lost) return;
+      if (running || lost || document.hidden) return;
       running = true;
       last = 0;
       windowStart = performance.now();
       frames = 0;
       raf = requestAnimationFrame(render);
     };
+    // any pointer activity also revives a loop that was paused by a lost
+    // focus event the browser never balanced with a focus event
+    wake = resume;
     const onVisibility = () => (document.hidden ? pause() : resume());
     document.addEventListener("visibilitychange", onVisibility);
     window.addEventListener("pagehide", pause);
@@ -496,10 +499,12 @@ export function LiquidBackground() {
     const onRestored = () => {
       lost = false;
       canvas.style.display = "";
-      // Rebuild happens on the next mount; keep the gradient until then.
+      // Full rebuild: the old program/buffers died with the context.
+      setGen((g) => g + 1);
     };
     canvas.addEventListener("webglcontextlost", onLost as EventListener, false);
     canvas.addEventListener("webglcontextrestored", onRestored, false);
+
 
     return () => {
       running = false;
