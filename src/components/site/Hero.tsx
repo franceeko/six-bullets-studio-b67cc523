@@ -1,6 +1,8 @@
 import { motion, useMotionValue, useScroll, useSpring, useTransform } from "framer-motion";
 import { ArrowDown } from "lucide-react";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+
+import { useSiteContent } from "@/lib/site-content";
 
 /**
  * Letter of the hero title.
@@ -76,8 +78,8 @@ export function Hero() {
 
   useEffect(() => {
     const onMove = (e: PointerEvent) => {
-      rawX.set((e.clientX / window.innerWidth - 0.5) * 40);
-      rawY.set((e.clientY / window.innerHeight - 0.5) * 26);
+      rawX.set((e.clientX / window.innerWidth - 0.5) * 22);
+      rawY.set((e.clientY / window.innerHeight - 0.5) * 16);
     };
     window.addEventListener("pointermove", onMove, { passive: true });
     return () => window.removeEventListener("pointermove", onMove);
@@ -106,7 +108,7 @@ export function Hero() {
                 const i = counter++;
                 const depth = 0.35 + ((i * 7) % 10) / 12;
                 return (
-                  <Letter key={`${line}-${ci}`} char={char} index={i} depth={depth} px={px} py={py} />
+                  <Letter key={`${line}-${ci}`} char={char} index={i} depth={depth} px={px} py={py} revealed={revealed} />
                 );
               })}
             </span>
@@ -120,13 +122,13 @@ export function Hero() {
           className="mt-7 flex flex-wrap items-center justify-between gap-5 border-t border-ink/25 pt-5"
         >
           <span className="font-mono text-[10px] uppercase tracking-[0.34em] text-ink/75 sm:text-xs">
-            Roblox horror studio
+            {content.hero.kicker}
           </span>
           <a
             href="#happy-town"
             className="group inline-flex items-center gap-3 font-mono text-[10px] uppercase tracking-[0.28em] text-ink transition-colors hover:text-wine sm:text-xs"
           >
-            Happy Town
+            {content.hero.cta}
             <span className="inline-block h-px w-10 bg-ink/50 transition-all group-hover:w-16 group-hover:bg-wine" />
           </a>
         </motion.div>
