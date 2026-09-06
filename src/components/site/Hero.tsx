@@ -51,6 +51,15 @@ function Letter({
 
 export function Hero() {
   const ref = useRef<HTMLElement>(null);
+  const { content } = useSiteContent();
+  const LINES = [content.hero.line1, content.hero.line2];
+  const [revealed, setRevealed] = useState(false);
+
+  // Unmask the letters once the entry animation is over.
+  useEffect(() => {
+    const t = window.setTimeout(() => setRevealed(true), 1500);
+    return () => window.clearTimeout(t);
+  }, []);
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start start", "end start"],
