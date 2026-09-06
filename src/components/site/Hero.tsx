@@ -1,29 +1,41 @@
 import { motion, useMotionValue, useScroll, useSpring, useTransform } from "framer-motion";
 import { ArrowDown } from "lucide-react";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
-const LINES = ["SIX", "BULLETS"];
+import { useSiteContent } from "@/lib/site-content";
 
+/**
+ * Letter of the hero title.
+ *
+ * The entry mask (`overflow-hidden`) is dropped once the reveal finishes —
+ * otherwise the pointer drift pushes each glyph against its own clip box and
+ * the title looks sliced.
+ */
 function Letter({
   char,
   index,
   depth,
   px,
   py,
+  revealed,
 }: {
   char: string;
   index: number;
   depth: number;
   px: ReturnType<typeof useSpring>;
   py: ReturnType<typeof useSpring>;
+  revealed: boolean;
 }) {
   const x = useTransform(px, (v: number) => v * depth);
   const y = useTransform(py, (v: number) => v * depth * 0.6);
 
   return (
-    <span className="inline-block overflow-hidden align-bottom" style={{ lineHeight: 0.82 }}>
+    <span
+      className={`inline-block align-bottom ${revealed ? "" : "overflow-hidden"}`}
+      style={{ lineHeight: 0.82 }}
+    >
       <motion.span
-        style={{ x, y }}
+        style={revealed ? { x, y } : undefined}
         initial={{ y: "115%", rotate: 4 }}
         animate={{ y: "0%", rotate: 0 }}
         transition={{
@@ -41,6 +53,15 @@ function Letter({
 
 export function Hero() {
   const ref = useRef<HTMLElement>(null);
+  const { content } = useSiteContent();
+  const LINES = [content.hero.line1, content.hero.line2];
+  const [revealed, setRevealed] = useState(false);
+
+  // Unmask the letters once the entry animation is over.
+  useEffect(() => {
+    const t = window.setTimeout(() => setRevealed(true), 1500);
+    return () => window.clearTimeout(t);
+  }, []);
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start start", "end start"],
@@ -57,8 +78,8 @@ export function Hero() {
 
   useEffect(() => {
     const onMove = (e: PointerEvent) => {
-      rawX.set((e.clientX / window.innerWidth - 0.5) * 40);
-      rawY.set((e.clientY / window.innerHeight - 0.5) * 26);
+      rawX.set((e.clientX / window.innerWidth - 0.5) * 22);
+      rawY.set((e.clientY / window.innerHeight - 0.5) * 16);
     };
     window.addEventListener("pointermove", onMove, { passive: true });
     return () => window.removeEventListener("pointermove", onMove);
@@ -87,7 +108,7 @@ export function Hero() {
                 const i = counter++;
                 const depth = 0.35 + ((i * 7) % 10) / 12;
                 return (
-                  <Letter key={`${line}-${ci}`} char={char} index={i} depth={depth} px={px} py={py} />
+                  <Letter key={`${line}-${ci}`} char={char} index={i} depth={depth} px={px} py={py} revealed={revealed} />
                 );
               })}
             </span>
@@ -101,13 +122,13 @@ export function Hero() {
           className="mt-7 flex flex-wrap items-center justify-between gap-5 border-t border-ink/25 pt-5"
         >
           <span className="font-mono text-[10px] uppercase tracking-[0.34em] text-ink/75 sm:text-xs">
-            Roblox horror studio
+            {content.hero.kicker}
           </span>
           <a
             href="#happy-town"
             className="group inline-flex items-center gap-3 font-mono text-[10px] uppercase tracking-[0.28em] text-ink transition-colors hover:text-wine sm:text-xs"
           >
-            Happy Town
+            {content.hero.cta}
             <span className="inline-block h-px w-10 bg-ink/50 transition-all group-hover:w-16 group-hover:bg-wine" />
           </a>
         </motion.div>

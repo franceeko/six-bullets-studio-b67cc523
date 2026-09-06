@@ -229,9 +229,10 @@ export function LiquidBackground() {
 
     // Touch devices never go above dpr 1 — the extra pixels are the main
     // cause of GPU memory pressure (and lost contexts) on phones.
-    const coarse =
-      typeof window !== "undefined" && window.matchMedia("(pointer: coarse)").matches;
-    const dprCap = coarse ? Math.min(1, settings.maxDpr) : settings.maxDpr;
+    // Phones used to be hard-capped at dpr 1, which is what made the water
+    // look pixelated on high-density screens. The tier already pays for the
+    // pixels with fewer waves and a lower framerate, so honour its cap.
+    const dprCap = settings.maxDpr;
     const dpr = () => Math.min(window.devicePixelRatio || 1, dprCap) * settings.scale;
 
     let w = 1;

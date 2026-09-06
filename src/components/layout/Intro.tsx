@@ -27,14 +27,17 @@ export function Intro() {
       window.setTimeout(() => setGone(true), 800);
     };
 
-    const minimum = new Promise<void>((r) => window.setTimeout(r, 1500));
+    const minimum = new Promise<void>((r) => window.setTimeout(r, 900));
     const fonts = (document as Document & { fonts?: FontFaceSet }).fonts?.ready ?? Promise.resolve();
-    const safety = new Promise<void>((r) => window.setTimeout(r, 3200));
+    const safety = new Promise<void>((r) => window.setTimeout(r, 2000));
 
-    void Promise.race([Promise.all([minimum, fonts]), safety]).then(finish);
+    void Promise.race([Promise.all([minimum, fonts]), safety]).then(finish, finish);
+    // last-resort net: nothing may ever leave the visitor on a locked page
+    const hardStop = window.setTimeout(finish, 2600);
 
     document.documentElement.style.overflow = "hidden";
     return () => {
+      window.clearTimeout(hardStop);
       document.documentElement.style.overflow = "";
     };
   }, []);

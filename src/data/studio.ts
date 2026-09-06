@@ -9,7 +9,6 @@ import yuki from "@/assets/devs/yuki.png.asset.json";
 import drigo from "@/assets/devs/drigo.png.asset.json";
 import thug from "@/assets/devs/thug.png.asset.json";
 import whirle from "@/assets/devs/whirle.png.asset.json";
-import melo from "@/assets/devs/melo.png.asset.json";
 import eater from "@/assets/devs/eater.png.asset.json";
 import poli from "@/assets/devs/poli.png.asset.json";
 
@@ -46,7 +45,6 @@ export const devs: Dev[] = [
   { name: "Yuki",    role: "Lead Dev · Modeler",                             tag: "Dev",        color: "plum",   avatar: yuki.url },
   { name: "Stray",   role: "Lead Dev · Modeler & Builder",                   tag: "Dev",        color: "butter", avatar: stray.url },
   { name: "Drigo",   role: "Programmer",                                     tag: "Dev",        color: "lilac",  avatar: drigo.url },
-  { name: "Melo",    role: "Builder",                                        tag: "Dev",        color: "teal",   avatar: melo.url },
   { name: "Eater",   role: "Game Designer",                                  tag: "Dev",        color: "coral",  avatar: eater.url },
   { name: "Thug",    role: "Animator",                                       tag: "Art",        color: "sky",    avatar: thug.url },
   { name: "Whirle",  role: "Animator",                                       tag: "Art",        color: "blush",  avatar: whirle.url },

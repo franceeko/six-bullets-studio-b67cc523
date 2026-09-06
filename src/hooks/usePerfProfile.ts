@@ -31,8 +31,8 @@ export const PERF_SETTINGS: Record<PerfTier, PerfSettings> = {
   // Phones: resolution costs less than wave count / framerate, and a blurry
   // upscaled canvas is the thing visitors actually notice. Keep the pixels,
   // pay for them with fewer waves and a lower fps.
-  eco: { octaves: 3, maxDpr: 1, scale: 0.7, fps: 30, rich: false },
-  minimal: { octaves: 2, maxDpr: 1, scale: 0.55, fps: 24, rich: false },
+  eco: { octaves: 3, maxDpr: 1.5, scale: 0.9, fps: 30, rich: false },
+  minimal: { octaves: 2, maxDpr: 1.5, scale: 0.8, fps: 22, rich: false },
   static: { octaves: 0, maxDpr: 1, scale: 0, fps: 0, rich: false },
 };
 
