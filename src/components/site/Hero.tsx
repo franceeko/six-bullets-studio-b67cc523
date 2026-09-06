@@ -2,28 +2,38 @@ import { motion, useMotionValue, useScroll, useSpring, useTransform } from "fram
 import { ArrowDown } from "lucide-react";
 import { useEffect, useRef } from "react";
 
-const LINES = ["SIX", "BULLETS"];
-
+/**
+ * Letter of the hero title.
+ *
+ * The entry mask (`overflow-hidden`) is dropped once the reveal finishes —
+ * otherwise the pointer drift pushes each glyph against its own clip box and
+ * the title looks sliced.
+ */
 function Letter({
   char,
   index,
   depth,
   px,
   py,
+  revealed,
 }: {
   char: string;
   index: number;
   depth: number;
   px: ReturnType<typeof useSpring>;
   py: ReturnType<typeof useSpring>;
+  revealed: boolean;
 }) {
   const x = useTransform(px, (v: number) => v * depth);
   const y = useTransform(py, (v: number) => v * depth * 0.6);
 
   return (
-    <span className="inline-block overflow-hidden align-bottom" style={{ lineHeight: 0.82 }}>
+    <span
+      className={`inline-block align-bottom ${revealed ? "" : "overflow-hidden"}`}
+      style={{ lineHeight: 0.82 }}
+    >
       <motion.span
-        style={{ x, y }}
+        style={revealed ? { x, y } : undefined}
         initial={{ y: "115%", rotate: 4 }}
         animate={{ y: "0%", rotate: 0 }}
         transition={{
